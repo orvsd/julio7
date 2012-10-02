@@ -1,0 +1,15 @@
+name = Julio OG Utilities
+description = Provides enhanced user experience for OG.
+core = 7.x
+package = "Julio: Custom Code"
+dependencies[] = "og_context"
+dependencies[] = "og_ui"
+project = "julio"
+
+
+; Information added by drupal.org packaging script on 2012-09-26
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "julio"
+datestamp = "1348620869"
+

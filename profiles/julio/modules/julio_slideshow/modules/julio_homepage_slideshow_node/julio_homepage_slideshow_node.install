@@ -1,0 +1,146 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function julio_homepage_slideshow_node_install() {
+  // Add an admissions node of type julio_administrative_unit
+  $node = new stdClass;
+  $node->type = 'media_gallery';
+
+  node_object_prepare($node);
+
+  $node->title = st('Homepage Slideshow');
+  $node->language = LANGUAGE_NONE;
+  $node->path = array(
+    'pathauto' => FALSE,
+    'alias' => 'slideshow',
+  );
+
+  $node->media_gallery_description[LANGUAGE_NONE][0] = array(
+    'value' => st('Images for the Homepage Slideshow'),
+    'format' => 'filtered_html',
+  );
+
+  $slides = julio_homepage_slideshow_node_create_slides();
+  if (!empty($slides)) {
+    foreach($slides as $slide) {
+      $node->media_gallery_media[LANGUAGE_NONE][] = (array)$slide;
+    }
+  }
+
+  // nivo slider settings
+  $node->media_nivo_slider_block[LANGUAGE_NONE][0]['value'] = 1;
+  $node->media_nivo_slider_image_style[LANGUAGE_NONE][0]['value'] = 'julio_slideshow';
+  $node->media_nivo_slider_pause_time[LANGUAGE_NONE][0]['value'] = 4000;
+  $node->media_nivo_slider_hover_pause[LANGUAGE_NONE][0]['value'] = 1;
+
+  node_save($node);
+  variable_set('julio_homepage_slideshow_node_nid', $node->nid);
+
+  $menu_link = array(
+    'menu_name' => 'menu-julio-admin-quick-links',
+    'link_path' => 'node/' . $node->nid,
+    'router_path' => 'node/%',
+    'link_title' => st('Homepage Slideshow'),
+    'options' => array(
+      'attributes' => array('title' => st('Manage the homepage slideshow')),
+    ),
+  );
+  menu_link_save($menu_link);
+  variable_set('julio_homepage_slideshow_mlid', $menu_link['mlid']);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function julio_homepage_slideshow_node_uninstall() {
+  $nid = variable_get('julio_homepage_slideshow_node_nid', 0);
+  if (!empty($nid)) {
+    node_delete($nid);
+  }
+  variable_del('julio_homepage_slideshow_node_nid');
+
+  $mlid = variable_get('julio_homepage_slideshow_mlid', 0);
+  if (!empty($mlid)) {
+    menu_link_delete($mlid);
+  }
+  variable_del('julio_homepage_slideshow_mlid');
+
+  $fids = variable_get('julio_homepage_slideshow_node_fids', array());
+  if (!empty($fids)) {
+    $files = file_load_multiple($fids);
+    if (!empty($files)) {
+      foreach($files as $file) {
+        file_delete($file);
+      }
+    }
+  }
+  variable_del('julio_homepage_slideshow_node_fids');
+}
+
+/**
+ * Helper function to add example slides
+ */
+function julio_homepage_slideshow_node_create_slides() {
+  // example slides
+
+  $images = array(
+    0 => array(
+      'filename' => '/images/textbooks.jpg',
+      'drupaluri' => 'public://textbooks.jpg',
+      'description' => 'This is an example slideshow image. Click the "Add/Edit Slides" contextual link change slideshow images. Image courtesy of
+Andy Mangold shared under the attribution license via <a href="http://www.flickr.com/photos/andymangold/sets/72157624600605299/">The Book Thing</a>',
+      'title' => 'Textbooks',
+      'caption' => '<h2>Example Slideshow Image</h2><p>This is a basic example slideshow image. Click the "Manage Slideshow" contextual link change slideshow images.</p><p>Image Credit: Andy Mangold shared under the <a href="http://creativecommons.org/licenses/by/2.0/">CC attribution license</a>.</p>',
+      'license' => 'cc',
+    ),
+    1 => array(
+      'filename' => '/images/flower.jpg',
+      'drupaluri' => 'public://flower.jpg',
+      'description' => 'This is an english textbook. Click the "Add/Edit Slides" contextual link change slideshow images. Image courtesy of
+~ therealme ~ shared under the attribution license via <a href="http://www.flickr.com/photos/therealme/1183684002/sizes/l/in/photostream/">Flower</a>',
+      'title' => 'Botany Club',
+      'caption' => '<h2>Botany Club Garden Hike</h2><p>Example picture. Click the "Add/Edit Slides" contextual link change slideshow images.</p><p>Image Credit: ~ therealme ~ shared under the <a href="http://creativecommons.org/licenses/by/2.0/">CC attribution license</a>.</p>',
+      'license' => 'cc',
+    ),
+    2 => array(
+      'filename' => '/images/chess.jpg',
+      'drupaluri' => 'public://chess.jpg',
+      'description' => 'Chess pieces. Click the "Add/Edit Slides" contextual link change slideshow images. Image courtesy of
+Muffet shared under the attribution license via <a href="http://www.flickr.com/photos/calliope/5347237755/sizes/l/in/photostream/">Chess Pieces</a>',
+      'title' => 'Chess Club',
+      'caption' => '<h2>Chess Club</h2><p>Chess club meets every Thursday. Click the "Add/Edit Slides" contextual link change slideshow images.</p><p>Image Credit: Muffet shared under the <a href="http://creativecommons.org/licenses/by/2.0/">CC attribution license</a>.</p>',
+      'license' => 'cc',
+    ),
+  );
+
+  $files = array();
+  $fids = array();
+  foreach ($images as $image) {
+    $fcontents = file_get_contents(dirname(__FILE__) . $image['filename']);
+    $file = file_save_data($fcontents, $image['drupaluri'], FILE_EXISTS_REPLACE);
+    $file = file_load($file->fid);
+    $file->media_description[LANGUAGE_NONE][0] = array(
+      'value' => $image['description'],
+      'format' => 'filtered_html',
+    );
+    $file->media_title[LANGUAGE_NONE][0] = array(
+      'value' => $image['title'],
+      'format' => 'filtered_html',
+    );
+    $file->media_nivo_slider_image_caption[LANGUAGE_NONE][0] = array(
+      'value' => $image['caption'],
+      'format' => 'filtered_html',
+    );
+
+    $file->field_license[LANGUAGE_NONE][0]['value'] = $image['license'];
+    file_save($file);
+    $files[] = $file;
+    $fids[] = $file->fid;
+  }
+
+  // so we know what files to remove
+  variable_set('julio_homepage_slideshow_node_fids', $fids);
+  return $files;
+}
