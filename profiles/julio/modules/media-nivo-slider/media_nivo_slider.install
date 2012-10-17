@@ -1,0 +1,615 @@
+<?php
+/**
+ * @file
+ *  Defines the various fields and instances controlled by the media_nivo_slider module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function media_nivo_slider_install() {
+  foreach (_media_nivo_slider_controlled_fields() as $field) {
+    field_create_field($field);
+  }
+  
+  foreach (_media_nivo_slider_controlled_instances() as $instance) {
+    field_create_instance($instance);
+  }
+  
+  // Set the module weight to be heavier than media_gallery
+  $result = db_select('system', 's')
+    ->fields('s', array('weight'))
+    ->condition('name', 'media_gallery')
+    ->execute();
+  $weight = $result->fetch()->weight;
+
+  db_update('system')
+    ->fields(array('weight' => $weight + 1))
+    ->condition('name', 'media_nivo_slider')
+    ->execute();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function media_nivo_slider_uninstall() {
+
+  // Remove the media_nivo_slider controlled fields
+  foreach (array_keys(_media_nivo_slider_controlled_fields()) as $field) {
+    field_delete_field($field);
+  }
+
+  // Remove the media_nivo_slider controlled instances
+  $instances = _media_nivo_slider_controlled_instances();
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+}
+
+function _media_nivo_slider_controlled_fields() {
+  $fields = array(
+    // Media Gallery fields
+    'media_nivo_slider_block' => array(
+      'field_name' => 'media_nivo_slider_block',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values_function' => '_media_nivo_slider_get_block_values',
+      ),
+    ),
+    'media_nivo_slider_image_style' => array(
+      'field_name' => 'media_nivo_slider_image_style',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'list_text',
+      'settings' => array(
+        'allowed_values_function' => '_media_nivo_slider_get_image_style_values',
+      ),
+    ),
+    'media_nivo_slider_effect' => array(
+      'field_name' => 'media_nivo_slider_effect',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'list_text',
+      'settings' => array(
+        'allowed_values_function' => '_media_nivo_slider_get_effect_values',
+      ),
+    ),
+    'media_nivo_slider_speed' => array(
+      'field_name' => 'media_nivo_slider_speed',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'number_integer'
+    ),
+    'media_nivo_slider_pause_time' => array(
+      'field_name' => 'media_nivo_slider_pause_time',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'number_integer'
+    ),
+    'media_nivo_slider_slices' => array(
+      'field_name' => 'media_nivo_slider_slices',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'number_integer'
+    ),
+    'media_nivo_slider_box_cols' => array(
+      'field_name' => 'media_nivo_slider_box_cols',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'number_integer'
+    ),
+    'media_nivo_slider_box_rows' => array(
+      'field_name' => 'media_nivo_slider_box_rows',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'number_integer'
+    ),
+    'media_nivo_slider_hover_pause' => array(
+      'field_name' => 'media_nivo_slider_hover_pause',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values_function' => '_media_nivo_slider_get_hover_pause_values',
+      ),
+    ),
+    'media_nivo_slider_cap_opacity' => array(
+      'field_name' => 'media_nivo_slider_cap_opacity',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'number_decimal'
+    ),
+    'media_nivo_slider_theme' => array(
+      'field_name' => 'media_nivo_slider_theme',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'list_text',
+      'settings' => array(
+        'allowed_values_function' => '_media_nivo_slider_get_theme_values',
+      ),
+    ),
+    'media_nivo_slider_ribbon' => array(
+      'field_name' => 'media_nivo_slider_ribbon',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values_function' => '_media_nivo_slider_get_ribbon_values',
+      ),
+    ),
+    
+    // Image fields
+    'media_nivo_slider_image_caption' => array(
+      'field_name' => 'media_nivo_slider_image_caption',
+      'translatable' => TRUE,
+      'locked' => TRUE,
+      'type' => 'text_long'
+    ),
+    'media_nivo_slider_image_link' => array(
+      'field_name' => 'media_nivo_slider_image_link',
+      'translatable' => TRUE,
+      'locked' => TRUE,
+      'type' => 'text'
+    ),
+);
+
+  return $fields;
+}
+
+function _media_nivo_slider_controlled_instances() {
+  $t = get_t();
+  $instances = array(
+    // Media Gallery instances
+    'media_nivo_slider_block' => array(
+      'field_name' => 'media_nivo_slider_block',
+      'label' => $t('Create a Nivo Slider block for this gallery'),
+      'default_value' => array(array('value' => 0)),
+      'widget' => array(
+        'type' => 'options_onoff',
+      ),
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_image_style' => array(
+      'field_name' => 'media_nivo_slider_image_style',
+      'label' => $t('Image Style'),
+      'description' => $t('Apply the selected image style to the images in the slider.'),
+      'widget' => array(
+        'type' => 'options_select',
+      ),
+      'required' => FALSE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_effect' => array(
+      'field_name' => 'media_nivo_slider_effect',
+      'label' => $t('Slide Transition Effect'),
+      'default_value' => array(array('value' => 'random')),
+      'widget' => array(
+        'type' => 'options_select',
+      ),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_speed' => array(
+      'field_name' => 'media_nivo_slider_speed',
+      'label' => $t('Slide Transition Speed'),
+      'default_value' => array(array('value' => 500)),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'settings' => array(
+        'min' => 1,
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_pause_time' => array(
+      'field_name' => 'media_nivo_slider_pause_time',
+      'label' => $t('Slide Pause Length'),
+      'default_value' => array(array('value' => 3000)),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'settings' => array(
+        'min' => 0,
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_slices' => array(
+      'field_name' => 'media_nivo_slider_slices',
+      'label' => $t('Slices'),
+      'default_value' => array(array('value' => 15)),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'settings' => array(
+        'min' => 0,
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_box_cols' => array(
+      'field_name' => 'media_nivo_slider_box_cols',
+      'label' => $t('Box Columns'),
+      'default_value' => array(array('value' => 8)),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'settings' => array(
+        'min' => 0,
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_box_rows' => array(
+      'field_name' => 'media_nivo_slider_box_rows',
+      'label' => $t('Box Rows'),
+      'default_value' => array(array('value' => 4)),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'settings' => array(
+        'min' => 0,
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_cap_opacity' => array(
+      'field_name' => 'media_nivo_slider_cap_opacity',
+      'label' => $t('Caption Opacity'),
+      'default_value' => array(array('value' => 0.8)),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'settings' => array(
+        'min' => 0,
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_hover_pause' => array(
+      'field_name' => 'media_nivo_slider_hover_pause',
+      'label' => $t('Pause the slideshow on hover.'),
+      'default_value' => array(array('value' => 0)),
+      'widget' => array(
+        'type' => 'options_onoff',
+      ),
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_theme' => array(
+      'field_name' => 'media_nivo_slider_theme',
+      'label' => $t('Nivo Slider theme'),
+      'default_value' => array(array('value' => 'default')),
+      'widget' => array(
+        'type' => 'options_select',
+      ),
+      'required' => TRUE,
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+    'media_nivo_slider_ribbon' => array(
+      'field_name' => 'media_nivo_slider_ribbon',
+      'label' => $t('Show slider ribbon.'),
+      'default_value' => array(array('value' => 0)),
+      'widget' => array(
+        'type' => 'options_onoff',
+      ),
+      'entity_type' => 'node',
+      'bundle' => 'media_gallery',
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'full' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'teaser' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+        'media_gallery_block' => array(
+          'type' => 'hidden',
+          'label' => 'hidden',
+        ),
+      ),
+    ),
+
+    // Image instances
+    'media_nivo_slider_image_caption' => array(
+      'field_name' => 'media_nivo_slider_image_caption',
+      'label' => $t('Nivo Slider Caption'),
+      'required' => FALSE,
+      'entity_type' => 'file',
+      'bundle' => 'image',
+      'widget' => array(
+        'type' => 'text_textarea',
+        'settings' => array('rows' => 4),
+      ),
+      'settings' => array(
+        'text_processing' => 1,
+      ),
+      'description' => $t('Set a caption to be displayed on this image when used in a Nivo Slider block.'),
+      'display' => array(
+        'default' => array('type' => 'hidden'),
+        'media_gallery_thumbnail' => array('type' => 'text_default', 'label' => 'hidden'),
+        'media_gallery_lightbox' => array('type' => 'text_default', 'label' => 'hidden'),
+        'media_gallery_detail' => array('type' => 'text_default', 'label' => 'hidden'),
+      ),
+    ),
+    
+    'media_nivo_slider_image_link' => array(
+      'field_name' => 'media_nivo_slider_image_link',
+      'label' => $t('Nivo Slider Link'),
+      'required' => FALSE,
+      'entity_type' => 'file',
+      'bundle' => 'image',
+      'description' => $t('Set a link that will wrap this image when used in a Nivo Slider block.'),
+      'display' => array(
+        'default' => array('type' => 'hidden'),
+        'media_gallery_thumbnail' => array('type' => 'text_default', 'label' => 'hidden'),
+        'media_gallery_lightbox' => array('type' => 'text_default', 'label' => 'hidden'),
+        'media_gallery_detail' => array('type' => 'text_default', 'label' => 'hidden'),
+      ),
+    ),
+  );
+  
+  return $instances;
+}
+
+/**
+ * Add the box column and row configuration fields.
+ */
+function media_nivo_slider_update_7100(&$sandbox) {
+  // Get the list of fields controlled by Media Nivo Slider.
+  $fields = _media_nivo_slider_controlled_fields();
+
+  // Create the box columns field.
+  field_create_field($fields['media_nivo_slider_box_cols']);
+
+  // Create the box rows field.
+  field_create_field($fields['media_nivo_slider_box_rows']);
+  
+  // Get the list of instances controlled by Media Nivo Slider.
+  $instances = _media_nivo_slider_controlled_instances();
+
+  // Create the box columns instance.
+  field_create_instance($instances['media_nivo_slider_box_cols']);
+
+  // Create the box rows instance.
+  field_create_instance($instances['media_nivo_slider_box_rows']);
+}
+
+/**
+ * Add the theme and ribbon configuration fields.
+ */
+function media_nivo_slider_update_7101(&$sandbox) {
+  // Get the list of fields controlled by Media Nivo Slider.
+  $fields = _media_nivo_slider_controlled_fields();
+
+  // Create the theme field.
+  field_create_field($fields['media_nivo_slider_theme']);
+
+  // Create the ribbon field.
+  field_create_field($fields['media_nivo_slider_ribbon']);
+  
+  // Get the list of instances controlled by Media Nivo Slider.
+  $instances = _media_nivo_slider_controlled_instances();
+
+  // Create the theme instance.
+  field_create_instance($instances['media_nivo_slider_theme']);
+
+  // Create the ribbon instance.
+  field_create_instance($instances['media_nivo_slider_ribbon']);
+}
