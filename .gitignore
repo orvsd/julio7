@@ -4,3 +4,14 @@ sites/*/settings.*.php
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+CHANGELOG.txt
+COPYRIGHT.txt
+INSTALL.mysql.txt
+INSTALL.pgsql.txt
+INSTALL.sqlite.txt
+INSTALL.txt
+LICENSE.txt
+MAINTAINERS.txt
+README.txt
+UPGRADE.txt

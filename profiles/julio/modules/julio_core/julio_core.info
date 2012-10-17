@@ -146,9 +146,9 @@ homepage_layout[julio_homepage_three_column][icon] = homepage_layout_icons/three
 homepage_layout[julio_homepage_three_column][description] = Three Column
 homepage_layout[default] = julio_homepage_one_column
 
-; Information added by drupal.org packaging script on 2012-09-26
+; Information added by drupal.org packaging script on 2012-10-03
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1348620869"
+datestamp = "1349224331"
 

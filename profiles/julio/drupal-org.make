@@ -35,7 +35,7 @@ projects[token][version] = 1.4
 projects[transliteration][version] = 3.1
 projects[views][version] = 3.5
 projects[views_bulk_operations][version] = 3.0
-projects[wysiwyg][version] = 2.1
+projects[wysiwyg][version] = 2.2
 
 ; Patches
 ; http://drupal.org/node/1414756

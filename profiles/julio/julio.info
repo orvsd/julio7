@@ -233,9 +233,9 @@ feature_sets[julio_teams_galleries][dependencies][] = julio_gallery
 feature_sets[julio_teams_galleries][enable][] = julio_teams_galleries
 feature_sets[julio_teams_galleries][disable][] = julio_teams_galleries
 
-; Information added by drupal.org packaging script on 2012-09-26
+; Information added by drupal.org packaging script on 2012-10-03
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1348620869"
+datestamp = "1349224331"
 
