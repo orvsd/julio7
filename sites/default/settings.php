@@ -405,7 +405,7 @@ $conf['reverse_proxy_addresses'] = array('140.211.15.203', '140.211.15.204');
  * HTTP proxy, and bypass the reverse proxy if one is used) in order to avoid
  * getting cached pages from the proxy.
  */
-$conf['omit_vary_cookie'] = TRUE;
+$conf['omit_vary_cookie'] = FALSE;
 
 /**
  * CSS/JS aggregated file gzip compression:
@@ -493,7 +493,7 @@ $conf['404_fast_html'] = '<html xmlns="http://www.w3.org/1999/xhtml"><head><titl
  *
  * To enable this functionality, remove the leading hash sign below.
  */
-drupal_fast_404();
+#drupal_fast_404();
 
 /**
  * Authorized file system operations:
