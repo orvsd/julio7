@@ -232,7 +232,7 @@ $update_free_access = FALSE;
  *   $drupal_hash_salt = file_get_contents('/home/example/salt.txt');
  *
  */
-$drupal_hash_salt = file_get_contents('/data/drupalsites/' . $_SERVER['USER'] . '/julio7/' . $_SERVER['FQDN']. '/salt.txt');
+$drupal_hash_salt = file_get_contents('/data/drupalsites/' . $orvsduser . '/julio7/' . $orvsdfqdn . '/salt.txt');
 
 /**
  * Base URL (optional).
@@ -254,7 +254,7 @@ $drupal_hash_salt = file_get_contents('/data/drupalsites/' . $_SERVER['USER'] . 
  * It is not allowed to have a trailing slash; Drupal will add it
  * for you.
  */
-$base_url = 'http://' . $_SERVER['FQDN'];
+$base_url = 'http://' . $orvsdfqdn;
 
 /**
  * PHP settings:
