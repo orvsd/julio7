@@ -514,4 +514,8 @@ $conf['404_fast_html'] = '<html xmlns="http://www.w3.org/1999/xhtml"><head><titl
  */
 $conf['allow_authorize_operations'] = FALSE;
 
-require_once('/data/drupalsites/' . $_SERVER['USER'] . '/julio7/' . $_SERVER['FQDN'] . '/settings.php');
+// Calculate orvsd username and fqdn based on directory names.
+$orvsdcwd = explode("/", getcwd());
+$orvsduser = $orvsdcwd[3];
+$orvsdfqdn = $orvsdcwd[5];
+require_once('/data/drupalsites/' . $orvsduser . '/julio7/' . $orvsdfqdn . '/settings.php');
