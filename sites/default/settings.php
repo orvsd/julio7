@@ -1,5 +1,10 @@
 <?php
 
+// Calculate orvsd username and fqdn based on directory names.
+$orvsdcwd = explode("/", getcwd());
+$orvsduser = $orvsdcwd[3];
+$orvsdfqdn = $orvsdcwd[5];
+
 /**
  * @file
  * Drupal site-specific configuration file.
@@ -514,8 +519,5 @@ $conf['404_fast_html'] = '<html xmlns="http://www.w3.org/1999/xhtml"><head><titl
  */
 $conf['allow_authorize_operations'] = FALSE;
 
-// Calculate orvsd username and fqdn based on directory names.
-$orvsdcwd = explode("/", getcwd());
-$orvsduser = $orvsdcwd[3];
-$orvsdfqdn = $orvsdcwd[5];
+// ORVSD settings.php include
 require_once('/data/drupalsites/' . $orvsduser . '/julio7/' . $orvsdfqdn . '/settings.php');
