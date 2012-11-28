@@ -259,7 +259,7 @@ $drupal_hash_salt = file_get_contents('/data/drupalsites/' . $orvsduser . '/juli
  * It is not allowed to have a trailing slash; Drupal will add it
  * for you.
  */
-$base_url = 'http://' . $orvsdfqdn;
+//$base_url = 'http://' . $orvsdfqdn;
 
 /**
  * PHP settings:
