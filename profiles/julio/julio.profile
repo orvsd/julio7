@@ -218,4 +218,27 @@ function julio_install_cleanup_stage2(&$context) {
 
   // disable bartik
   theme_disable(array('bartik'));
+
+  $features_revert = array(
+    'julio_administrative_unit_announcements', // required for og permissions
+    'julio_administrative_unit_galleries', // required for og permissions
+  );
+
+  foreach ($features_revert as $module) {
+    if (($feature = feature_load($module, TRUE)) && module_exists($module)) {
+      $components = array();
+
+      // Gather all the feature components.
+      foreach (array_keys($feature->info['features']) as $component) {
+        if (features_hook($component, 'features_revert')) {
+          $components[] = $component;
+        }
+      }
+
+      // Revert each component.
+      foreach ($components as $component) {
+        features_revert(array($module => array($component)));
+      }
+    }
+  }
 }

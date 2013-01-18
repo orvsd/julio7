@@ -10,7 +10,7 @@
 function julio_announcements_views_default_views() {
   $export = array();
 
-  $view = new view;
+  $view = new view();
   $view->name = 'julio_announcements';
   $view->description = 'All news and announcement posts.';
   $view->tag = 'julio_announcements';
@@ -40,70 +40,27 @@ function julio_announcements_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
   $handler->display->display_options['fields']['title']['element_type'] = 'h2';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
   /* Field: Content: Post date */
   $handler->display->display_options['fields']['created']['id'] = 'created';
   $handler->display->display_options['fields']['created']['table'] = 'node';
   $handler->display->display_options['fields']['created']['field'] = 'created';
   $handler->display->display_options['fields']['created']['label'] = '';
-  $handler->display->display_options['fields']['created']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['created']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['created']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['created']['element_label_colon'] = 0;
-  $handler->display->display_options['fields']['created']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['created']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['created']['empty_zero'] = 0;
+  $handler->display->display_options['fields']['created']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['created']['date_format'] = 'large';
   /* Field: Content: Body */
   $handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
   $handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id_1']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id_1']['label'] = '';
-  $handler->display->display_options['fields']['entity_id_1']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['nl2br'] = 0;
   $handler->display->display_options['fields']['entity_id_1']['alter']['max_length'] = '250';
-  $handler->display->display_options['fields']['entity_id_1']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['trim'] = 1;
-  $handler->display->display_options['fields']['entity_id_1']['alter']['html'] = 1;
+  $handler->display->display_options['fields']['entity_id_1']['alter']['trim'] = TRUE;
+  $handler->display->display_options['fields']['entity_id_1']['alter']['html'] = TRUE;
   $handler->display->display_options['fields']['entity_id_1']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['entity_id_1']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['entity_id_1']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['entity_id_1']['hide_alter_empty'] = 1;
   $handler->display->display_options['fields']['entity_id_1']['settings'] = array(
     'trim_length' => '100',
   );
-  $handler->display->display_options['fields']['entity_id_1']['field_api_classes'] = 0;
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -124,48 +81,40 @@ function julio_announcements_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['use_more'] = FALSE;
-  $handler->display->display_options['use_more_always'] = TRUE;
-  $handler->display->display_options['use_more_text'] = 'All News';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'node';
-  $handler->display->display_options['row_options']['links'] = 0;
-  $handler->display->display_options['row_options']['comments'] = 0;
+  $handler->display->display_options['row_options']['links'] = FALSE;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['empty'] = FALSE;
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
-  $handler->display->display_options['empty']['area']['empty'] = FALSE;
   $handler->display->display_options['empty']['area']['content'] = 'There are no featured announcements yet.';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
-  $handler->display->display_options['empty']['area']['tokenize'] = 0;
   $handler->display->display_options['defaults']['relationships'] = FALSE;
   /* Relationship: OG membership: OG membership from Node */
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
   $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['required'] = 0;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   /* Contextual filter: OG membership: Group ID */
   $handler->display->display_options['arguments']['gid']['id'] = 'gid';
   $handler->display->display_options['arguments']['gid']['table'] = 'og_membership';
   $handler->display->display_options['arguments']['gid']['field'] = 'gid';
   $handler->display->display_options['arguments']['gid']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['arguments']['gid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['gid']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['gid']['title'] = 'News in %1';
   $handler->display->display_options['arguments']['gid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['gid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['gid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['gid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['gid']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['arguments']['gid']['validate']['type'] = 'og';
-  $handler->display->display_options['arguments']['gid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['gid']['not'] = 0;
   $handler->display->display_options['path'] = 'announcements';
   $handler->display->display_options['menu']['title'] = 'Announcements';
   $handler->display->display_options['menu']['weight'] = '0';
@@ -174,6 +123,7 @@ function julio_announcements_views_default_views() {
 
   /* Display: Block */
   $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '5';
@@ -184,31 +134,14 @@ function julio_announcements_views_default_views() {
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
   $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['required'] = 1;
+  $handler->display->display_options['relationships']['og_membership_rel']['required'] = TRUE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   /* Contextual filter: OG membership: Group ID */
   $handler->display->display_options['arguments']['gid']['id'] = 'gid';
@@ -216,23 +149,21 @@ function julio_announcements_views_default_views() {
   $handler->display->display_options['arguments']['gid']['field'] = 'gid';
   $handler->display->display_options['arguments']['gid']['relationship'] = 'og_membership_rel';
   $handler->display->display_options['arguments']['gid']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['gid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['gid']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['gid']['title'] = '%1 News';
   $handler->display->display_options['arguments']['gid']['default_argument_type'] = 'og_context';
-  $handler->display->display_options['arguments']['gid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['gid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['gid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['gid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['gid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['gid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['gid']['validate']['type'] = 'og';
-  $handler->display->display_options['arguments']['gid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['gid']['not'] = 0;
   $handler->display->display_options['block_description'] = 'Announcements';
 
   /* Display: Featured Announcements */
   $handler = $view->new_display('block', 'Featured Announcements', 'block_2');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Featured News';
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['use_more'] = FALSE;
   $handler->display->display_options['use_more'] = TRUE;
   $handler->display->display_options['defaults']['pager'] = FALSE;
@@ -244,10 +175,8 @@ function julio_announcements_views_default_views() {
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
-  $handler->display->display_options['empty']['area']['empty'] = FALSE;
   $handler->display->display_options['empty']['area']['content'] = 'There are no announcements yet.';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
-  $handler->display->display_options['empty']['area']['tokenize'] = 0;
   $handler->display->display_options['defaults']['relationships'] = FALSE;
   /* Relationship: Flags: julio_announcement_feature */
   $handler->display->display_options['relationships']['flag_content_rel']['id'] = 'flag_content_rel';
@@ -261,28 +190,12 @@ function julio_announcements_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
   $handler->display->display_options['block_description'] = 'Featured Announcements';
 
   /* Display: Feed */
   $handler = $view->new_display('feed', 'Feed', 'feed_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['style_plugin'] = 'rss';
   $handler->display->display_options['row_plugin'] = 'node_rss';
@@ -298,6 +211,7 @@ function julio_announcements_views_default_views() {
   $handler = $view->new_display('block', 'All Announcements', 'block_3');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'News';
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '5';
@@ -309,24 +223,7 @@ function julio_announcements_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
   $handler->display->display_options['block_description'] = 'All Announcements';
   $export['julio_announcements'] = $view;
 

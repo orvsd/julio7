@@ -6,10 +6,10 @@
  */
 
 // The Nivo Slider download path.
-define('MEDIA_NIVO_SLIDER_DOWNLOAD_PATH', 'http://dev7studios.com/downloads/42');
+define('MEDIA_NIVO_SLIDER_DOWNLOAD_PATH', 'http://dev7studios.com/downloads/46');
 
 // The Nivo Slider file name
-define('MEDIA_NIVO_SLIDER_FILE_NAME', 'nivo-slider.2.6.zip');
+define('MEDIA_NIVO_SLIDER_FILE_NAME', 'nivo-slider.2.7.1.zip');
 
 // The Nivo Slider directory name
 define('MEDIA_NIVO_SLIDER_DIR_NAME', 'nivo-slider');

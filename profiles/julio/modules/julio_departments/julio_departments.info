@@ -1,7 +1,7 @@
 name = Departments
 description = Departments and Academic Units
 core = 7.x
-package = Julio: Features
+package = Julio: Departments
 php = 5.2.4
 project = julio
 dependencies[] = colorbox
@@ -24,27 +24,6 @@ features[menu_custom][] = menu-julio-departments-menu
 features[menu_links][] = menu-julio-departments-menu:departments
 features[menu_links][] = menu-julio-new-group:node/add/julio-department
 features[node][] = julio_department
-features[og_features_permission][] = node:julio_department:add user
-features[og_features_permission][] = node:julio_department:administer group
-features[og_features_permission][] = node:julio_department:administer og menu
-features[og_features_permission][] = node:julio_department:approve and deny subscription
-features[og_features_permission][] = node:julio_department:create julio_group_post content
-features[og_features_permission][] = node:julio_department:delete any julio_group_post content
-features[og_features_permission][] = node:julio_department:delete own julio_group_post content
-features[og_features_permission][] = node:julio_department:manage members
-features[og_features_permission][] = node:julio_department:manage permissions
-features[og_features_permission][] = node:julio_department:manage roles
-features[og_features_permission][] = node:julio_department:subscribe
-features[og_features_permission][] = node:julio_department:subscribe without approval
-features[og_features_permission][] = node:julio_department:unsubscribe
-features[og_features_permission][] = node:julio_department:update any julio_group_post content
-features[og_features_permission][] = node:julio_department:update group
-features[og_features_permission][] = node:julio_department:update own julio_group_post content
-features[user_permission][] = create julio_department content
-features[user_permission][] = delete any julio_department content
-features[user_permission][] = delete own julio_department content
-features[user_permission][] = edit any julio_department content
-features[user_permission][] = edit own julio_department content
 features[variable][] = comment_anonymous_julio_department
 features[variable][] = comment_default_mode_julio_department
 features[variable][] = comment_default_per_page_julio_department
@@ -59,9 +38,9 @@ features[variable][] = node_preview_julio_department
 features[variable][] = node_submitted_julio_department
 features[views_view][] = julio_departments
 
-; Information added by drupal.org packaging script on 2012-10-03
+; Information added by drupal.org packaging script on 2013-01-10
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1349224331"
+datestamp = "1357824399"
 

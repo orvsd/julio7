@@ -10,7 +10,7 @@
 function julio_clubs_announcements_views_default_views() {
   $export = array();
 
-  $view = new view;
+  $view = new view();
   $view->name = 'julio_clubs_news';
   $view->description = '';
   $view->tag = 'default';
@@ -35,44 +35,25 @@ function julio_clubs_announcements_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '0';
-  $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = 0;
   $handler->display->display_options['style_plugin'] = 'list';
   $handler->display->display_options['row_plugin'] = 'fields';
   /* Relationship: OG membership: OG membership from Node */
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
   $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['required'] = 0;
   /* Relationship: OG membership: Group Node from OG membership */
   $handler->display->display_options['relationships']['og_membership_related_node_group']['id'] = 'og_membership_related_node_group';
   $handler->display->display_options['relationships']['og_membership_related_node_group']['table'] = 'og_membership';
   $handler->display->display_options['relationships']['og_membership_related_node_group']['field'] = 'og_membership_related_node_group';
   $handler->display->display_options['relationships']['og_membership_related_node_group']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_related_node_group']['required'] = 0;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -111,20 +92,20 @@ function julio_clubs_announcements_views_default_views() {
   $handler->display->display_options['filters']['gid']['table'] = 'og_membership';
   $handler->display->display_options['filters']['gid']['field'] = 'gid';
   $handler->display->display_options['filters']['gid']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['filters']['gid']['value']['value'] = variable_get('julio_clubs_nid', 0);
+  $handler->display->display_options['filters']['gid']['value']['value'] = '5';
   $handler->display->display_options['filters']['gid']['group'] = 2;
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['defaults']['css_class'] = FALSE;
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['use_more'] = FALSE;
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'node';
-  $handler->display->display_options['row_options']['links'] = 0;
-  $handler->display->display_options['row_options']['comments'] = 0;
+  $handler->display->display_options['row_options']['links'] = FALSE;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
@@ -132,48 +113,15 @@ function julio_clubs_announcements_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
   /* Field: Content: Event date */
   $handler->display->display_options['fields']['field_julio_event_date']['id'] = 'field_julio_event_date';
   $handler->display->display_options['fields']['field_julio_event_date']['table'] = 'field_data_field_julio_event_date';
   $handler->display->display_options['fields']['field_julio_event_date']['field'] = 'field_julio_event_date';
   $handler->display->display_options['fields']['field_julio_event_date']['label'] = '';
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['alter']['html'] = 0;
   $handler->display->display_options['fields']['field_julio_event_date']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['field_julio_event_date']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['field_julio_event_date']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['field_julio_event_date']['hide_alter_empty'] = 1;
   $handler->display->display_options['fields']['field_julio_event_date']['settings'] = array(
     'format_type' => 'long',
     'fromto' => 'value',
@@ -181,11 +129,11 @@ function julio_clubs_announcements_views_default_views() {
     'multiple_from' => '',
     'multiple_to' => '',
   );
-  $handler->display->display_options['fields']['field_julio_event_date']['field_api_classes'] = 0;
   $handler->display->display_options['path'] = 'clubs/announcements';
 
   /* Display: Clubs News */
   $handler = $view->new_display('block', 'Clubs News', 'block_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '5';
@@ -194,6 +142,7 @@ function julio_clubs_announcements_views_default_views() {
 
   /* Display: Feed */
   $handler = $view->new_display('feed', 'Feed', 'feed_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['style_plugin'] = 'rss';
   $handler->display->display_options['row_plugin'] = 'node_rss';

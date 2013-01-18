@@ -27,11 +27,15 @@ function julio_core_menu() {
  * Implements hook_menu_breadcrumb_alter().
  */
 function julio_core_menu_breadcrumb_alter(&$active_trail, $item) {
-  // hide all crumbs referencing /admin
-  foreach ($active_trail as $index => $item) {
-    if (isset($item['link_path'])) {
-      if (strpos($item['link_path'], 'admin') === 0) {
-        unset($active_trail[$index]);
+  global $user;
+
+  // hide all crumbs referencing /admin except for uid = 1
+  if ($user->uid != 1) {
+    foreach ($active_trail as $index => $item) {
+      if (isset($item['link_path'])) {
+        if (strpos($item['link_path'], 'admin') === 0) {
+          unset($active_trail[$index]);
+        }
       }
     }
   }

@@ -1,19 +1,20 @@
-name = "Announcements UI"
-description = "Announcements blocks"
-core = "7.x"
-package = "Julio: Features"
-php = "5.2.4"
-project = "julio"
-dependencies[] = "context"
-dependencies[] = "context_og"
-dependencies[] = "views"
-features[context][] = "julio_announcements"
-features[context][] = "julio_announcements_all"
-features[ctools][] = "context:context:3"
+name = Announcements UI
+description = Announcements blocks
+core = 7.x
+package = Julio: Announcements
+php = 5.2.4
+project = julio
+dependencies[] = context
+dependencies[] = context_og
+dependencies[] = views
+features[context][] = julio_announcements
+features[context][] = julio_announcements_all
+features[ctools][] = context:context:3
+features[features_api][] = api:1
 
-; Information added by drupal.org packaging script on 2012-10-03
+; Information added by drupal.org packaging script on 2013-01-10
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1349224331"
+datestamp = "1357824399"
 

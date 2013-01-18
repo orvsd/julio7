@@ -8,10 +8,7 @@
  * Implements hook_views_api().
  */
 function julio_staff_views_api() {
-  list($module, $api) = func_get_args();
-  if ($module == "views" && $api == "views_default") {
-    return array("version" => "3.0");
-  }
+  return array("api" => "3.0");
 }
 
 /**
@@ -41,6 +38,9 @@ function julio_staff_flag_default_flags() {
         0 => '3',
       ),
     ),
+    'weight' => 0,
+    'show_on_form' => FALSE,
+    'access_author' => '',
     'show_on_profile' => 1,
     'access_uid' => '',
     'module' => 'julio_staff',
@@ -50,4 +50,5 @@ function julio_staff_flag_default_flags() {
     'api_version' => 2,
   );
   return $flags;
+
 }

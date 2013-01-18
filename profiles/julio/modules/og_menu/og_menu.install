@@ -5,29 +5,46 @@
  */
 function og_menu_schema() {
   $schema['og_menu'] = array(
+    'description' => 'Stores relationships between organic groups and their custom menus.',
     'fields' => array(
-      'gid' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-      ),
       'menu_name' => array(
         'type' => 'varchar',
-        'length' => 128,
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'gid' => array(
+        'description' => "The group's unique ID.",
+        'type' => 'int',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'group_type' => array(
+        'description' => "The group's entity type (e.g. node, comment, etc').",
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
         'default' => '',
       ),
     ),
-    'primary key' => array('gid', 'menu_name'),
+    'primary key' => array('menu_name'),
+    'foreign keys' => array(
+      'menu_custom' => array(
+        'table' => 'menu_custom',
+        'columns' => array(
+          'menu_name' => 'menu_name',
+        )
+      ),
+    ),
   );
   return $schema;
 }
 
 /**
  * Implementation of hook_uninstall.
- *
- * Deletes og_menu variables.
- * (todo: Deletes menus that were created through og_menu)
  */
 function og_menu_uninstall() {
+  // Delete custom variables.
   $vars = array(
     'og_menu_assignment',
     'og_menu_block_links',
@@ -40,6 +57,36 @@ function og_menu_uninstall() {
   foreach ($vars as $var) {
     variable_del($var);
   }
-  // @todo Delete Table og_menu
-  // @todo Decide whether we want to delete all menu's created by og_menu.
+  // Delete custom menus.
+  $result = db_select('og_menu', 'm')
+    ->fields('m', array('menu_name'))
+    ->execute();
+  while ($record = $result->fetchAssoc()) {
+    if ($menu = menu_load($record['menu_name'])) {
+      menu_delete($menu);
+    }
+  }
+}
+
+/**
+ * Update og_menu schema to store group type in addition to gid.
+ */
+function og_menu_update_7300(&$sandbox) {
+  db_drop_primary_key('og_menu');
+  db_query('ALTER TABLE {og_menu} MODIFY COLUMN menu_name varchar(32) NOT NULL DEFAULT \'\' FIRST');
+  db_change_field('og_menu', 'gid', 'gid', array(
+    'description' => "The group's unique ID.",
+    'type' => 'int',
+    'size' => 'normal',
+    'not null' => TRUE,
+  ));
+  db_add_field('og_menu', 'group_type', array(
+    'description' => "The group's entity type (e.g. node, comment, etc').",
+    'type' => 'varchar',
+    'length' => '32',
+    'not null' => TRUE,
+    'default' => 'node',
+  ));
+  db_field_set_default('og_menu', 'group_type', '');
+  db_add_primary_key('og_menu', array('menu_name'));
 }

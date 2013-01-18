@@ -13,8 +13,8 @@ function julio_departments_galleries_og_features_default_permissions() {
   // Exported og permission: 'node:julio_department:create media_gallery content'
   $permissions['node:julio_department:create media_gallery content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 
@@ -36,8 +36,8 @@ function julio_departments_galleries_og_features_default_permissions() {
   // Exported og permission: 'node:julio_department:update any media_gallery content'
   $permissions['node:julio_department:update any media_gallery content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 

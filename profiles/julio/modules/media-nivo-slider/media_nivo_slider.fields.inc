@@ -39,16 +39,6 @@ function _media_nivo_slider_get_effect_values() {
 }
 
 /**
- * Allowed values callback for media_nivo_slider_hover_pause list field.
- */
-function _media_nivo_slider_get_hover_pause_values() {
-  return array(
-    0 => t('Do not pause slideshow on hover.'),
-    1 => t('Pause slideshow on hover.'),
-  );
-}
-
-/**
  * Allowed values callback for media_nivo_slider_image_style field.
  */
 function _media_nivo_slider_get_image_style_values() {
@@ -59,6 +49,9 @@ function _media_nivo_slider_get_image_style_values() {
       $allowed = $cache->data;
     }
     else {
+      // Add option for no style.
+      $allowed['_none'] = '- None -';
+    
       // Get a list of the available image styles.
       $styles = array_keys(image_styles());
       
@@ -105,12 +98,31 @@ function _media_nivo_slider_get_theme_values() {
 }
 
 /**
- * Allowed values callback for media_nivo_slider_hover_pause list field.
+ * Allowed values callback for media_nivo_slider_config list field.
  */
-function _media_nivo_slider_get_ribbon_values() {
-  return array(
-    0 => t('Do not show slider ribbon.'),
-    1 => t('Show slider ribbon.'),
-  );
+function _media_nivo_slider_get_configs() {
+  $presets = &drupal_static(__FUNCTION__);
+  
+  if (!isset($presets)) {
+    if ($cache = cache_get('media_nivo_slider_presets')) {
+      $presets = $cache->data;
+    }
+    else {
+      $presets = array();
+      
+      $results = db_select('media_nivo_slider', 'ns')
+        ->fields('ns', array('cid', 'name'))
+        ->execute();
+      
+      foreach ($results as $preset) {
+        $presets[$preset->cid] = $preset->name;
+      }
+      
+      // Cache the results
+      cache_set('media_nivo_slider_presets', $presets, 'cache');
+    }
+  }
+
+  return $presets;
 }
 

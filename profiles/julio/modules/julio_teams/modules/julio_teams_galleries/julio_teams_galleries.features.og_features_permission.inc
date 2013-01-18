@@ -13,8 +13,8 @@ function julio_teams_galleries_og_features_default_permissions() {
   // Exported og permission: 'node:julio_team:create media_gallery content'
   $permissions['node:julio_team:create media_gallery content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 
@@ -44,8 +44,8 @@ function julio_teams_galleries_og_features_default_permissions() {
   // Exported og permission: 'node:julio_team:update own media_gallery content'
   $permissions['node:julio_team:update own media_gallery content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 

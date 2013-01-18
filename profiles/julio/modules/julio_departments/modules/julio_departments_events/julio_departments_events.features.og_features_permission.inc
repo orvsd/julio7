@@ -43,8 +43,8 @@ function julio_departments_events_og_features_default_permissions() {
   // Exported og permission: 'node:julio_department:update own julio_event content'
   $permissions['node:julio_department:update own julio_event content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 

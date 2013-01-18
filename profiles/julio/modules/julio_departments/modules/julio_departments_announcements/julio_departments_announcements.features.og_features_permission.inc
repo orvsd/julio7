@@ -28,8 +28,8 @@ function julio_departments_announcements_og_features_default_permissions() {
   // Exported og permission: 'node:julio_department:delete own julio_announcement content'
   $permissions['node:julio_department:delete own julio_announcement content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 

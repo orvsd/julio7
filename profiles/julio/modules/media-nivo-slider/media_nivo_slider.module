@@ -10,6 +10,61 @@ define('MEDIA_NIVO_SLIDER_PATH', 'sites/all/libraries/nivo-slider');
 require_once(dirname(__FILE__) . '/media_nivo_slider.fields.inc');
 
 /**
+ * Implements hook_menu().
+ */
+function media_nivo_slider_menu() {
+  $items['admin/config/media/media-nivo-slider'] = array(
+    'title' => 'Media Nivo Slider',
+    'description' => 'Manage Media Nivo Slider configurations',
+    'access arguments' => array('administer nivo slider'),
+    'page callback' => 'media_nivo_slider_admin',
+    'file' => 'media_nivo_slider.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['admin/config/media/media-nivo-slider/add'] = array(
+    'title' => 'Create a Nivo Slider Configuration',
+    'access arguments' => array('administer nivo slider'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_nivo_slider_config'),
+    'file' => 'media_nivo_slider.admin.inc',
+    'type' => MENU_LOCAL_ACTION,
+  );
+  
+  $items['admin/config/media/media-nivo-slider/edit/%'] = array(
+    'title' => 'Edit a Nivo Slider Configuration',
+    'access arguments' => array('administer nivo slider'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_nivo_slider_config', 5),
+    'file' => 'media_nivo_slider.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['admin/config/media/media-nivo-slider/delete/%'] = array(
+    'title' => 'Delete a Nivo Slider Configuration',
+    'access arguments' => array('administer nivo slider'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('media_nivo_slider_config_delete', 5),
+    'file' => 'media_nivo_slider.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function media_nivo_slider_permission() {
+  return array(
+    'administer nivo slider' => array(
+      'title' => t('Administer Nivo Slider'), 
+      'description' => t('Create/Edit Nivo Slider configurations.'),
+    ),
+  );
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  * Collects the Media Nivo Slider fields into a fieldset for better organization.
  */
@@ -28,30 +83,10 @@ function media_nivo_slider_form_media_gallery_node_form_alter(&$form, &$form_sta
     ),
   );
 
-  // Fill in some default values in the event the gallery was created prior to the Media Nivo Slider being installed.
-  $form['media_nivo_slider_effect'][LANGUAGE_NONE]['#default_value'] = (!empty($form['media_nivo_slider_effect'][LANGUAGE_NONE]['#default_value']) ? $form['media_nivo_slider_effect'][LANGUAGE_NONE]['#default_value'] : array('random'));
-  $form['media_nivo_slider_speed'][LANGUAGE_NONE][0]['value']['#default_value'] = ($form['media_nivo_slider_speed'][LANGUAGE_NONE][0]['value']['#default_value'] ? $form['media_nivo_slider_speed'][LANGUAGE_NONE][0]['value']['#default_value'] : 500);
-  $form['media_nivo_slider_pause_time'][LANGUAGE_NONE][0]['value']['#default_value'] = ($form['media_nivo_slider_pause_time'][LANGUAGE_NONE][0]['value']['#default_value'] ? $form['media_nivo_slider_pause_time'][LANGUAGE_NONE][0]['value']['#default_value'] : 3000);
-  $form['media_nivo_slider_slices'][LANGUAGE_NONE][0]['value']['#default_value'] = ($form['media_nivo_slider_slices'][LANGUAGE_NONE][0]['value']['#default_value'] ? $form['media_nivo_slider_slices'][LANGUAGE_NONE][0]['value']['#default_value'] : 15);
-  $form['media_nivo_slider_box_cols'][LANGUAGE_NONE][0]['value']['#default_value'] = ($form['media_nivo_slider_box_cols'][LANGUAGE_NONE][0]['value']['#default_value'] ? $form['media_nivo_slider_box_cols'][LANGUAGE_NONE][0]['value']['#default_value'] : 8);
-  $form['media_nivo_slider_box_rows'][LANGUAGE_NONE][0]['value']['#default_value'] = ($form['media_nivo_slider_box_rows'][LANGUAGE_NONE][0]['value']['#default_value'] ? $form['media_nivo_slider_box_rows'][LANGUAGE_NONE][0]['value']['#default_value'] : 4);
-  $form['media_nivo_slider_cap_opacity'][LANGUAGE_NONE][0]['value']['#default_value'] = ($form['media_nivo_slider_cap_opacity'][LANGUAGE_NONE][0]['value']['#default_value'] ? $form['media_nivo_slider_cap_opacity'][LANGUAGE_NONE][0]['value']['#default_value'] : 0.8);
-  $form['media_nivo_slider_theme'][LANGUAGE_NONE]['#default_value'] = (!empty($form['media_nivo_slider_theme'][LANGUAGE_NONE]['#default_value']) ? $form['media_nivo_slider_theme'][LANGUAGE_NONE]['#default_value'] : array('default'));
-
   // Build an array of the fields to group into a vertical tab.
   $fieldset = array(
     'media_nivo_slider_block',
-    'media_nivo_slider_image_style',
-    'media_nivo_slider_effect',
-    'media_nivo_slider_speed',
-    'media_nivo_slider_pause_time',
-    'media_nivo_slider_slices',
-    'media_nivo_slider_box_cols',
-    'media_nivo_slider_box_rows',
-    'media_nivo_slider_cap_opacity',
-    'media_nivo_slider_hover_pause',
-    'media_nivo_slider_theme',
-    'media_nivo_slider_ribbon',
+    'media_nivo_slider_config',
   );
 
   // Build up the fieldset.
@@ -101,137 +136,160 @@ function media_nivo_slider_block_info() {
 function media_nivo_slider_block_view($delta = '') {  
   // Load the gallery node.
   $node = node_load($delta);
-  $block = array();
+  
+  // Load the Nivo Slider configuration.
+  $config = db_select('media_nivo_slider', 'ns')
+    ->fields('ns')
+    ->condition('cid', $node->media_nivo_slider_config[LANGUAGE_NONE][0]['value'])
+    ->execute()
+    ->fetchObject();
 
-  // Make sure the Media Gallery node was loaded successfully.
-  if (!empty($node)) {
-    // Add the necessary nivo slider CSS and JS.
-    $library_path = libraries_get_path('nivo-slider');
-    drupal_add_css($library_path . '/nivo-slider.css');
-    drupal_add_css($library_path . '/themes/' . $node->media_nivo_slider_theme[LANGUAGE_NONE][0]['value'] . '/' . $node->media_nivo_slider_theme[LANGUAGE_NONE][0]['value'] . '.css', array('basename' => 'media_nivo_slider_theme.css'));
-    drupal_add_js($library_path . '/jquery.nivo.slider.pack.js');
-    drupal_add_js(drupal_get_path('module', 'media_nivo_slider') . '/js/media_nivo_slider.js');
+  $settings = unserialize($config->settings);
 
-    $block['subject'] = check_plain($node->title);
-    if (empty($node->media_gallery_media_original)) {
-      // Bail out now if there won't be any media items to show.
-      $block['content'] = t('No content available.');
-    }
-    else {
-      // Collect an array of file IDs associated with this gallery.
-      // Media Gallery's media_gallery_media field, by default, is locked
-      // and not multi-lingual. For now we will assume the fields are language
-      // neutral.
-      $node = clone $node;
-      $node->media_gallery_media = $node->media_gallery_media_original;
-      $files = &$node->media_gallery_media[LANGUAGE_NONE];
-      $gallery_fids = array();
-      
-      foreach ($files as $file) {
-        $gallery_fids[] = $file['fid'];
-      }
+  // Add the necessary nivo slider CSS and JS.
+  $library_path = libraries_get_path('nivo-slider');
+  drupal_add_css($library_path . '/nivo-slider.css');
+  drupal_add_css($library_path . '/themes/' . $settings['slider_theme'] . '/' . $settings['slider_theme'] . '.css', array('basename' => 'media_nivo_slider_theme.css'));
+  drupal_add_js($library_path . '/jquery.nivo.slider.pack.js');
+  drupal_add_js(drupal_get_path('module', 'media_nivo_slider') . '/js/media_nivo_slider.js');
 
-      $images = array();
-      $media_items = media_multi_load(implode(' ', $gallery_fids));
-      
-      foreach ($media_items as $media) {
-        // Short-circuit the loop so as not to add any non-image media items that may be in the gallery.
-        if ($media->type != 'image') {
-          continue;
-        }
-        
-        $slide = array();
-
-        // Get the image information so we can set the width and height of the image.
-        $image_info = image_get_info($media->uri);
-
-        // If image_get_info returned false, we either don't have an image or the file doesn't exist.
-        // Skip this image, and log a warning.
-        if ($image_info === FALSE) {
-          watchdog('Media Nivo', t('Media file @file_uri, is not an image or does not exist.', array('@file_uri' => $media->uri)));
-          continue;
-        }
-
-        // Start constructing the image tag.
-        // Build the variables array.
-        $variables = array(
-          'path' => $media->uri, 
-          'width' => $image_info['width'] . 'px',
-          'height' => $image_info['height'] . 'px',
-        );
-        
-        // Set the image caption if ones been set.
-        if (isset($media->media_nivo_slider_image_caption[LANGUAGE_NONE][0]['value'])) {
-          $variables['title'] = $media->media_nivo_slider_image_caption[LANGUAGE_NONE][0]['value'];
-        }
-        
-        // Build the image tag, using a image style if one has been set.
-        if (isset($node->media_nivo_slider_image_style[LANGUAGE_NONE][0]['value'])) {
-          $variables['style_name'] = $node->media_nivo_slider_image_style[LANGUAGE_NONE][0]['value'];
-          
-          // Load the specified image_style.
-          $style = image_style_load($variables['style_name']);
-
-          // Check if the image style derivative for this image exists, if not create it.
-          $image_style_file = image_style_path($variables['style_name'], $variables['path']);
-          if (!file_exists($image_style_file)) {
-            image_style_create_derivative($style, $variables['path'], $image_style_file);
-          }
-
-          // Get the image dimensions after the image style has been applied.
-          $image_style_info = image_get_info($image_style_file);
-
-          // Update the theme variables.
-          $variables['width'] = $image_info['width'] . 'px';
-          $variables['height'] = $image_info['height'] . 'px';
-
-          // Create the image tag.
-          $slide['image'] = theme('image_style', $variables);
-        }
-        else {               
-          // Create the image tag.
-          $slide['image'] = theme('image', $variables);
-        }
-
-        // Set the image link if one has been set.
-        if (isset($media->media_nivo_slider_image_link[LANGUAGE_NONE][0]['value'])) {
-          $slide['link'] = url($media->media_nivo_slider_image_link[LANGUAGE_NONE][0]['value'], array('absolute' => TRUE));
-        }
-        
-        // Add the slide to the images set.
-        $images[] = $slide;
-      }
-
-      // Clean the node title and use it for the slider id
-      $slider_id = drupal_html_class(check_plain($node->title));
-      
-      // Build array of theme parameters.
-      $theme_params = array(
-        'slider_id' => $slider_id, 
-        'images' => $images,
-        'slider_theme' => $node->media_nivo_slider_theme[LANGUAGE_NONE][0]['value'],
-        'ribbon' => $node->media_nivo_slider_ribbon[LANGUAGE_NONE][0]['value'],
-      );    
-      
-      // Display the block.
-      $block['content'] = theme('media_nivo_slider_block', $theme_params);
-      
-      // Build parameter array.
-      $js_params = array(
-        'effect' => $node->media_nivo_slider_effect[LANGUAGE_NONE][0]['value'],
-        'animSpeed' => $node->media_nivo_slider_speed[LANGUAGE_NONE][0]['value'],
-        'pauseTime' => $node->media_nivo_slider_pause_time[LANGUAGE_NONE][0]['value'],
-        'slices' => $node->media_nivo_slider_slices[LANGUAGE_NONE][0]['value'],
-        'boxCols' => $node->media_nivo_slider_box_cols[LANGUAGE_NONE][0]['value'],
-        'boxRows' => $node->media_nivo_slider_box_rows[LANGUAGE_NONE][0]['value'],
-        'hoverPause' => ($node->media_nivo_slider_hover_pause[LANGUAGE_NONE][0]['value'] ? 'true' : 'false'),
-        'captionOpacity' => $node->media_nivo_slider_cap_opacity[LANGUAGE_NONE][0]['value'],
-      );
-
-      // Add the slider parameters to the Drupal.settings javascript variable list.
-      drupal_add_js(array('media_nivo_slider' => array($slider_id => $js_params)), 'setting');
-    }
+  $block['subject'] = check_plain($node->title);
+  if (empty($node->media_gallery_media_original)) {
+    // Bail out now if there won't be any media items to show.
+    $block['content'] = t('No content available.');
   }
+  else {
+    // Collect an array of file IDs associated with this gallery.
+    // Media Gallery's media_gallery_media field, by default, is locked
+    // and not multi-lingual. For now we will assume the fields are language
+    // neutral.
+    $node = clone $node;
+    $node->media_gallery_media = $node->media_gallery_media_original;
+    $files = &$node->media_gallery_media[LANGUAGE_NONE];
+    $gallery_fids = array();
+    
+    foreach ($files as $file) {
+      $gallery_fids[] = $file['fid'];
+    }
+
+    $images = array();
+    $media_items = media_multi_load(implode(' ', $gallery_fids));
+    
+    foreach ($media_items as $media) {
+      // Short-circuit the loop so as not to add any non-image media items that may be in the gallery.
+      if ($media->type != 'image') {
+        continue;
+      }
+      
+      $slide = array();
+
+      // Get the image information so we can set the width and height of the image.
+      $image_info = image_get_info($media->uri);
+
+      // If image_get_info returned false, we either don't have an image or the file doesn't exist.
+      // Skip this image, and log a warning.
+      if ($image_info === FALSE) {
+        watchdog('Media Nivo', t('Media file @file_uri, is not an image or does not exist.', array('@file_uri' => $media->uri)));
+        continue;
+      }
+
+      // Start constructing the image tag.
+      // Build the variables array.
+      $variables = array(
+        'path' => $media->uri, 
+        'width' => $image_info['width'] . 'px',
+        'height' => $image_info['height'] . 'px',
+      );
+      
+      // Set the image caption if ones been set.
+      if (isset($media->media_nivo_slider_image_caption[LANGUAGE_NONE][0]['value'])) {
+        $variables['title'] = $media->media_nivo_slider_image_caption[LANGUAGE_NONE][0]['value'];
+      }
+      
+      // Build the image tag, using a image style if one has been set.
+      if (isset($settings['image_style']) && $settings['image_style'] != '_none') {
+        $variables['style_name'] = $settings['image_style'];
+        
+        // Load the specified image_style.
+        $style = image_style_load($variables['style_name']);
+
+        // Check if the image style derivative for this image exists, if not create it.
+        $image_style_file = image_style_path($variables['style_name'], $variables['path']);
+        if (!file_exists($image_style_file)) {
+          image_style_create_derivative($style, $variables['path'], $image_style_file);
+        }
+
+        // Get the image dimensions after the image style has been applied.
+        $image_style_info = image_get_info($image_style_file);
+
+        // Update the theme variables.
+        $variables['width'] = $image_info['width'] . 'px';
+        $variables['height'] = $image_info['height'] . 'px';
+
+        // Create the image tag.
+        $slide['image'] = theme('image_style', $variables);
+      }
+      else {               
+        // Create the image tag.
+        $slide['image'] = theme('image', $variables);
+      }
+
+      // Set the image link if one has been set.
+      if (isset($media->media_nivo_slider_image_link[LANGUAGE_NONE][0]['value'])) {
+        $slide['link'] = url($media->media_nivo_slider_image_link[LANGUAGE_NONE][0]['value'], array('absolute' => TRUE));
+      }
+      
+      // Add the slide to the images set.
+      $images[] = $slide;
+    }
+
+    // Clean the node title and use it for the slider id
+    $slider_id = drupal_html_class(check_plain($node->title));
+    
+    // Build array of theme parameters.
+    $theme_params = array(
+      'slider_id' => $slider_id, 
+      'images' => $images,
+      'slider_theme' => $settings['slider_theme'],
+      'ribbon' => $settings['ribbon'],
+    );    
+    
+    // Display the block.
+    $block['content'] = theme('media_nivo_slider_block', $theme_params);
+    
+    // Build parameter array.
+    $js_params = array(
+      'effect' => $settings['transition'],
+      'slices' => $settings['slices'],
+      'boxCols' => $settings['box_columns'],
+      'boxRows' => $settings['box_rows'],
+      'animSpeed' => $settings['transition_speed'],
+      'pauseTime' => $settings['pause_length'],
+      'directionNav' => $settings['direction_nav'],
+      'directionNavHide' => $settings['direction_nav_hide'],
+      'controlNav' => $settings['control_nav'],
+      'controlNavThumbs' => $settings['control_nav_thumbs'],
+      'controlNavThumbsFromRel' => $settings['control_nav_rel'],
+      'controlNavThumbsSearch' => $settings['control_nav_search'],
+      'controlNavThumbsReplace' => $settings['control_nav_replace'],
+      'keyboardNav' => $settings['keyboard_nav'],
+      'pauseOnHover' => $settings['pause_slideshow'],
+      'manualAdvance' => $settings['manual_advance'],
+      'captionOpacity' => $settings['caption_opacity'],
+      'prevText' => $settings['direction_nav_prev_txt'],
+      'nextText' => $settings['direction_nav_next_txt'],
+      'randomStart' => $settings['random_start'],
+      'beforeChange' => (isset($settings['before_change']) ? json_encode($settings['before_change']) : ''),
+      'afterChange' => (isset($settings['after_change']) ? json_encode($settings['after_change']) : ''),
+      'slideshowEnd' => (isset($settings['slideshow_end']) ? json_encode($settings['slideshow_end']) : ''),
+      'lastSlide' => (isset($settings['last_slide']) ? json_encode($settings['last_slide']) : ''),
+      'afterLoad' => (isset($settings['after_load']) ? json_encode($settings['after_load']) : ''),
+    );
+    
+    // Add the slider parameters to the Drupal.settings javascript variable list.
+    drupal_add_js(array('media_nivo_slider' => array($slider_id => $js_params)), 'setting');
+  }
+
   return $block;
 }
 

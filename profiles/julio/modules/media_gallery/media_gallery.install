@@ -118,7 +118,7 @@ function media_gallery_requirements() {
   // In addition to the fields we control, we also need the standard field_tags
   // that most sites will have gotten from their install profile.
   $required_fields['field_tags'] = array('type' => 'taxonomy_term_reference');
-  
+
   foreach ($required_fields as $field_name => $field_definition) {
     $field = field_info_field($field_name);
     // If the field doesn't exist, we will create it on install.
@@ -881,7 +881,7 @@ function media_gallery_create_taxonomy_vocab() {
     'description' => $t('Groups of rich media galleries'),
     'machine_name' => 'gallery_collections',
   );
-  
+
   taxonomy_vocabulary_save($vocabulary);
   variable_set('media_gallery_collection_vid', $vocabulary->vid);
   return $vocabulary;
@@ -972,7 +972,7 @@ function media_gallery_uninstall() {
  * In order to have the expose block checkbox appear above the column and row number dropdowns
  * it was necessary to update those field instances with their initial values, essentially
  * refreshing them.
- */ 
+ */
 function media_gallery_update_7000() {
   $t = get_t();
 
@@ -1004,7 +1004,7 @@ function media_gallery_update_7000() {
   field_delete_field('media_gallery_image_info');
 
   // Ensure that the new field exists
-  $extraField = array(
+  $extra_field = array(
     'field_name' => 'media_gallery_lightbox_extras',
     'cardinality' => 1,
     'locked' => TRUE,
@@ -1013,9 +1013,9 @@ function media_gallery_update_7000() {
       'allowed_values_function' => '_media_gallery_get_lightbox_extras_values',
     ),
   );
-  _media_gallery_ensure_field($extraField);
+  _media_gallery_ensure_field($extra_field);
 
-  $newInstance = array(
+  $new_instance = array(
     'field_name' => 'media_gallery_lightbox_extras',
     'label' => 'Lightbox title and description',
     'description' => $t('Show title and description'),
@@ -1044,7 +1044,7 @@ function media_gallery_update_7000() {
       ),
     ),
   );
-  _media_gallery_ensure_instance($newInstance);
+  _media_gallery_ensure_instance($new_instance);
 }
 
 /**
@@ -1052,7 +1052,7 @@ function media_gallery_update_7000() {
  */
 function media_gallery_update_7001() {
   $result = db_query("SELECT nid FROM {node} WHERE type = 'media_gallery'");
-  foreach($result as $record) {
+  foreach ($result as $record) {
     $node = node_load($record->nid);
     if ($node->media_gallery_format[LANGUAGE_NONE][0]['value'] == 'lightbox_text') {
       $node->media_gallery_format[LANGUAGE_NONE][0]['value'] = 'lightbox';

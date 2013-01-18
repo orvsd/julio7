@@ -1,7 +1,7 @@
 name = Clubs
 description = School Clubs and Organizations
 core = 7.x
-package = Julio: Features
+package = Julio: Clubs
 php = 5.2.4
 project = julio
 dependencies[] = colorbox
@@ -24,27 +24,6 @@ features[menu_custom][] = menu-julio-clubs-menu
 features[menu_links][] = menu-julio-clubs-menu:clubs
 features[menu_links][] = menu-julio-new-group:node/add/julio-club
 features[node][] = julio_club
-features[og_features_permission][] = node:julio_club:add user
-features[og_features_permission][] = node:julio_club:administer group
-features[og_features_permission][] = node:julio_club:administer og menu
-features[og_features_permission][] = node:julio_club:approve and deny subscription
-features[og_features_permission][] = node:julio_club:create julio_group_post content
-features[og_features_permission][] = node:julio_club:delete any julio_group_post content
-features[og_features_permission][] = node:julio_club:delete own julio_group_post content
-features[og_features_permission][] = node:julio_club:manage members
-features[og_features_permission][] = node:julio_club:manage permissions
-features[og_features_permission][] = node:julio_club:manage roles
-features[og_features_permission][] = node:julio_club:subscribe
-features[og_features_permission][] = node:julio_club:subscribe without approval
-features[og_features_permission][] = node:julio_club:unsubscribe
-features[og_features_permission][] = node:julio_club:update any julio_group_post content
-features[og_features_permission][] = node:julio_club:update group
-features[og_features_permission][] = node:julio_club:update own julio_group_post content
-features[user_permission][] = create julio_club content
-features[user_permission][] = delete any julio_club content
-features[user_permission][] = delete own julio_club content
-features[user_permission][] = edit any julio_club content
-features[user_permission][] = edit own julio_club content
 features[variable][] = comment_anonymous_julio_club
 features[variable][] = comment_default_mode_julio_club
 features[variable][] = comment_default_per_page_julio_club
@@ -59,9 +38,9 @@ features[variable][] = node_preview_julio_club
 features[variable][] = node_submitted_julio_club
 features[views_view][] = julio_clubs
 
-; Information added by drupal.org packaging script on 2012-10-03
+; Information added by drupal.org packaging script on 2013-01-10
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1349224331"
+datestamp = "1357824399"
 

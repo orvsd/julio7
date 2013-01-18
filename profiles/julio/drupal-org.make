@@ -1,29 +1,30 @@
-core = 7.15
+core = 7.17
 api = 2
 
 ; contrib
-projects[colorbox][version] = 1.3
-projects[context][version] = 3.0-beta4
-projects[context_og][version] = 2.x-dev
+projects[colorbox][version] = 1.4
+projects[context][version] = 3.0-beta6
+projects[context_og][version] = 2.1
 projects[css_options][version] = 1.0
 projects[ctools][version] = 1.2
 projects[date][version] = 2.6
+projects[diff][version] = 3.2
 projects[email][version] = 1.2
-projects[entity][version] = 1.0-rc4
-projects[entityreference][version] = 1.0-rc5
+projects[entity][version] = 1.0
+projects[entityreference][version] = 1.0
 projects[entityreference_prepopulate][version] = 1.1
-projects[features][version] = 1.x-dev
-projects[feature_set][version] = 1.x-dev
+projects[features][version] = 2.0-beta1
+projects[feature_set][version] = 1.1
 projects[flag][version] = 2.0
-projects[fullcalendar][version] = 2.x-dev
+projects[fullcalendar][version] = 2.0
 projects[image_resize_filter][version] = 1.13
 projects[insert][version] = 1.2
 projects[libraries][version] = 1.0
 projects[media][version] = 1.2
 projects[media_gallery][version] = 1.x-dev
-projects[media-nivo-slider][version] = 1.3
+projects[media-nivo-slider][version] = 2.1
 projects[multiform][version] = 1.0
-projects[og][version] = 2.x-dev
+projects[og][version] = 2.0-rc1
 projects[og_menu][version] = 3.x-dev
 projects[pathauto][version] = 1.2
 projects[plupload][version] = 1.0
@@ -34,12 +35,8 @@ projects[strongarm][version] = 2.0
 projects[token][version] = 1.4
 projects[transliteration][version] = 3.1
 projects[views][version] = 3.5
-projects[views_bulk_operations][version] = 3.0
+projects[views_bulk_operations][version] = 3.1
 projects[wysiwyg][version] = 2.2
-
-; Patches
-; http://drupal.org/node/1414756
-projects[media-nivo-slider][patch][] = http://drupal.org/files/media-nivo-slider-1414756-1.patch
 
 ; Themes
 projects[hexagon] = 2.x-dev
@@ -55,7 +52,7 @@ libraries[colorbox][download][url] = http://jacklmoore.com/colorbox/colorbox.zip
 libraries[fullcalendar][download][type] = get
 libraries[fullcalendar][download][url] = http://arshaw.com/fullcalendar/downloads/fullcalendar-1.5.3.zip
 libraries[fullcalendar][download][sha1] = c7219b1ddd2b11ccdbf83ebd116872affbc45d7a
-libraries[fullcalendar][download][subtree] = fullcalendar
+libraries[fullcalendar][download][subtree] = fullcalendar-1.5.3/fullcalendar
 
 libraries[nivo-slider][download][type] = get
 libraries[nivo-slider][download][url] = https://github.com/downloads/gilbitron/Nivo-Slider/nivo-slider2.7.1.zip

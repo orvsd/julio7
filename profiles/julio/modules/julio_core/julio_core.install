@@ -29,7 +29,7 @@ function julio_core_install() {
 
   foreach ($nodes as $var => $values) {
     $node = new stdClass;
-    $node->type = 'page';
+    $node->type = 'julio_page';
 
     node_object_prepare($node);
     $node->title = $values['title'];

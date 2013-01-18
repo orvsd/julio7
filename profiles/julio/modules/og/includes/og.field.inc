@@ -63,17 +63,19 @@ function og_field_widget_form(&$form, &$form_state, $field, $instance, $langcode
     $field_modes[] = 'admin';
   }
 
-  // Get the "Other group" group IDs.
-  $target_type = $field['settings']['target_type'];
-  $entity_gids = og_get_entity_groups($entity_type, $entity);
-  $entity_gids = !empty($entity_gids[$target_type]) ? $entity_gids[$target_type] : array();
+  // Build an array of entity IDs. Field's $items are loaded
+  // in OgBehaviorHandler::load().
+  $entity_gids = array();
+  foreach ($items as $item) {
+    $entity_gids[] = $item['target_id'];
+  }
 
+  $target_type = $field['settings']['target_type'];
   $user_gids = og_get_entity_groups();
   $user_gids = !empty($user_gids[$target_type]) ? $user_gids[$target_type] : array();
 
-  $other_groups_ids = array();
-  $full_diff = array_diff(array_merge($entity_gids, $user_gids), array_intersect($entity_gids, $user_gids));
-  $other_groups_ids = array_values($full_diff);
+  // Get the "Other group" group IDs.
+  $other_groups_ids = array_diff($entity_gids, $user_gids);
 
   foreach ($field_modes as $field_mode) {
     $mocked_instance = og_get_mocked_instance($instance, $field_mode);
@@ -81,7 +83,14 @@ function og_field_widget_form(&$form, &$form_state, $field, $instance, $langcode
 
     if ($has_admin) {
       $mocked_instance['required'] = FALSE;
-      $mocked_instance['label'] = $field_mode == 'default' ? t('Default') : t('Administrator');
+      if ($field_mode == 'default') {
+        $mocked_instance['label'] = t('Your groups');
+        $mocked_instance['description'] = t('Associate this content with groups you belong to.');
+      }
+      else {
+        $mocked_instance['label'] = t('Other groups');
+        $mocked_instance['description'] = t('As groups administrator, associate this content with groups you do <em>not</em> belong to.');
+      }
 
       if ($id) {
         // The field might be required, and it will throw an exception
@@ -269,52 +278,11 @@ function og_entityreference_autocomplete_callback($type, $field_name, $entity_ty
   $field = field_info_field($field_name);
   $instance = field_info_instance($entity_type, $field_name, $bundle_name);
   $instance = og_get_mocked_instance($instance, $field_mode);
-  $matches = array();
 
   if (!$field || !$instance || $field['type'] != 'entityreference' || !field_access('edit', $field, $entity_type)) {
     return MENU_ACCESS_DENIED;
   }
 
-  $entity = NULL;
-  if ($entity_id !== 'NULL') {
-    $entity = entity_load_single($entity_type, $entity_id);
-    if (!$entity || !entity_access('view', $entity_type, $entity)) {
-      return MENU_ACCESS_DENIED;
-    }
-  }
-  $handler = entityreference_get_selection_handler($field, $instance, $entity_type, $entity);
-
-  if ($type == 'tags') {
-    // The user enters a comma-separated list of tags. We only autocomplete the last tag.
-    $tags_typed = drupal_explode_tags($string);
-    $tag_last = drupal_strtolower(array_pop($tags_typed));
-    if (!empty($tag_last)) {
-      $prefix = count($tags_typed) ? implode(', ', $tags_typed) . ', ' : '';
-    }
-  }
-  else {
-    // The user enters a single tag.
-    $prefix = '';
-    $tag_last = $string;
-  }
-
-  if (!empty($tag_last)) {
-    // Get an array of matching entities.
-    $entity_labels = $handler->getReferencableEntities($tag_last, $instance['widget']['settings']['match_operator'], 10);
-
-    // Loop through the products and convert them into autocomplete output.
-    foreach ($entity_labels as $entity_id => $label) {
-      $key = "$label ($entity_id)";
-      // Strip things like starting/trailing white spaces, line breaks and tags.
-      $key = preg_replace('/\s\s+/', ' ', str_replace("\n", '', trim(decode_entities(strip_tags($key)))));
-      // Names containing commas or quotes must be wrapped in quotes.
-      if (strpos($key, ',') !== FALSE || strpos($key, '"') !== FALSE) {
-        $key = '"' . str_replace('"', '""', $key) . '"';
-      }
-      $matches[$prefix . $key] = '<div class="reference-autocomplete">' . $label . '</div>';
-    }
-  }
-
-  drupal_json_output($matches);
+  return entityreference_autocomplete_callback_get_matches($type, $field, $instance, $entity_type, $entity_id, $string);
 }
 

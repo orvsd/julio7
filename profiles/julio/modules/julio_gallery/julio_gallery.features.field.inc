@@ -10,7 +10,7 @@
 function julio_gallery_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'node-media_gallery-julio_og_group_ref'
+  // Exported field: 'node-media_gallery-julio_og_group_ref'.
   $fields['node-media_gallery-julio_og_group_ref'] = array(
     'field_config' => array(
       'active' => '1',
@@ -31,6 +31,7 @@ function julio_gallery_field_default_fields() {
           0 => 'target_id',
         ),
       ),
+      'locked' => '0',
       'module' => 'entityreference',
       'settings' => array(
         'handler' => 'og',
@@ -43,19 +44,12 @@ function julio_gallery_field_default_fields() {
               'status' => 0,
             ),
           ),
-          'hide_secondary_field' => 1,
           'membership_type' => 'og_membership_type_default',
-          'primary_field' => '0',
-          'reference_type' => 'my_groups',
           'sort' => array(
-            'direction' => 'ASC',
-            'field' => 'body:value',
-            'property' => 'nid',
             'type' => 'none',
           ),
           'target_bundles' => array(),
         ),
-        'handler_submit' => 'Change handler',
         'target_type' => 'node',
       ),
       'translatable' => '0',
@@ -75,7 +69,7 @@ function julio_gallery_field_default_fields() {
             'link' => FALSE,
           ),
           'type' => 'entityreference_label',
-          'weight' => 26,
+          'weight' => 25,
         ),
         'full' => array(
           'label' => 'above',
@@ -102,6 +96,15 @@ function julio_gallery_field_default_fields() {
       'required' => 0,
       'settings' => array(
         'behaviors' => array(
+          'og_widget' => array(
+            'admin' => array(
+              'widget_type' => 'entityreference_autocomplete',
+            ),
+            'default' => array(
+              'widget_type' => 'options_select',
+            ),
+            'status' => TRUE,
+          ),
           'prepopulate' => array(
             'action' => 'hide',
             'fallback' => 'form_error',
@@ -111,24 +114,12 @@ function julio_gallery_field_default_fields() {
         ),
         'user_register_form' => FALSE,
       ),
-      'view modes' => array(
-        'full' => array(
-          'custom settings' => FALSE,
-          'label' => 'Full',
-          'type' => 'og_list_default',
-        ),
-        'teaser' => array(
-          'custom settings' => FALSE,
-          'label' => 'Teaser',
-          'type' => 'og_list_default',
-        ),
-      ),
       'widget' => array(
-        'active' => 1,
-        'module' => 'options',
+        'active' => 0,
+        'module' => 'og',
         'settings' => array(),
-        'type' => 'options_select',
-        'weight' => 32,
+        'type' => 'og_complex',
+        'weight' => '3',
       ),
     ),
   );

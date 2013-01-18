@@ -43,8 +43,8 @@ function julio_clubs_announcements_og_features_default_permissions() {
   // Exported og permission: 'node:julio_club:update own julio_announcement content'
   $permissions['node:julio_club:update own julio_announcement content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 

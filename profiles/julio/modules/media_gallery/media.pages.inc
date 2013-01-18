@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * @file
+ * This file provieds media specific functions.
+ */
+
+
+/**
  * @todo Move this code to the Media module's media.pages.inc file when it is
  *   ready to be committed to CVS.
  */

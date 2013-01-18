@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Common pages for the Media Gallery module.
+ */
+
+/**
  * Page callback to list all galleries.
  *
  * TODO: When I grow up I want to be a View.
@@ -11,7 +16,7 @@ function media_gallery_list_galleries($term) {
     module_load_include('inc', 'taxonomy', 'taxonomy.pages');
     return taxonomy_term_page($term);
   }
-  
+
   // Add front-end resources for drag-and-drop sorting.
   if (user_access('administer media galleries')) {
     drupal_add_library('system', 'ui.sortable');
@@ -21,6 +26,9 @@ function media_gallery_list_galleries($term) {
     $sort_collection_url = url('media-gallery/sort/collection/' . $term->tid . '/' . drupal_get_token('media_gallery'));
     drupal_add_js(array('mediaGallerySortCollectionUrl' => $sort_collection_url), array('type' => 'setting'));
   }
+  // Assign the term name as the page title.
+  drupal_set_title($term->name);
+
   // Build breadcrumb based on the hierarchy of the term.
   $current = (object) array(
     'tid' => $term->tid,
@@ -57,7 +65,7 @@ function media_gallery_list_galleries($term) {
     $build['pager'] = array(
       '#theme' => 'pager',
       '#weight' => 10,
-     );
+    );
     $build['#term'] = $term;
     $build['#theme'] = 'media_gallery_collection';
   }
@@ -156,7 +164,16 @@ function media_gallery_ajax_sort($type, $item) {
   $id_prefix = '';
   switch ($type) {
     case 'collection':
-      $id_prefix = 'node-';
+      // There are some themes, which set a specific html-prefix for the node
+      // id. Parse the id to be compatible with all themes.
+      // @see drupal_html_id()
+      $search = empty($order[0]) ? '' : $order[0];
+      if (preg_match('/^([A-Za-z0-9\-_]+?-)[0-9]+(--[0-9]+)?$/', $search, $match)) {
+        $id_prefix = $match[1];
+      }
+      else {
+        $id_prefix = 'node-';
+      }
       $order = _media_gallery_sanitize_ids($id_prefix, $order);
       $result = media_gallery_reorder_collection($item, $order);
       break;
@@ -226,7 +243,7 @@ function media_gallery_reorder_gallery($gallery, $order) {
     $num_per_page = $gallery->media_gallery_columns[LANGUAGE_NONE][0]['value'] * $gallery->media_gallery_rows[LANGUAGE_NONE][0]['value'];
     $offset = $num_per_page * $page;
   }
-  
+
   foreach ($order as $new_delta => $old_delta) {
     $gallery->media_gallery_media[LANGUAGE_NONE][$new_delta + $offset] = $media_field[$old_delta + $offset];
   }
@@ -283,7 +300,7 @@ function media_gallery_add_images($node) {
     if (empty($existing_fids[$fid])) {
       $file = Array();
       $file['fid'] = $fid;
-      $file['title'] = null;
+      $file['title'] = NULL;
       $file['data'] = '';
       $items[] = $file;
     }

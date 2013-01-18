@@ -241,7 +241,8 @@ function theme_media_gallery_media_item_lightbox($variables) {
         drupal_render_children($element) .
       '</div>' .
     '</div>';
-  } else {
+  }
+  else {
     $output = $media_gallery_detail;
   }
 
@@ -430,7 +431,7 @@ function theme_media_gallery_item($variables) {
     // video thumbnails had no title and alt attributes so the string replace was
     // not triggering for them.
     $new_image = str_replace(array('title=""', 'alt=""'), array('', ''), $image);
-    $image = str_replace('/>', ' title="'.$variables['title'].'" alt="'.$variables['title'].'" />', $new_image);;
+    $image = str_replace('/>', ' title="' . $variables['title'] . '" alt="' . $variables['title'] . '" />', $new_image);;
   }
 
   // Add sliding door top div and wrappers

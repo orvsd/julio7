@@ -12,9 +12,9 @@ files[] = includes/views/handlers/og_context_plugin_argument_default_group_conte
 ; Views access plugin
 files[] = includes/views/handlers/og_context_plugin_access_og_perm.inc
 
-; Information added by drupal.org packaging script on 2012-10-02
-version = "7.x-2.0-beta2+21-dev"
+; Information added by drupal.org packaging script on 2012-12-29
+version = "7.x-2.0-rc1"
 core = "7.x"
 project = "og"
-datestamp = "1349138557"
+datestamp = "1356816812"
 

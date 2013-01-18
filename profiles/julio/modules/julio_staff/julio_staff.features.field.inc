@@ -10,7 +10,7 @@
 function julio_staff_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'user-user-field_julio_department'
+  // Exported field: 'user-user-field_julio_department'.
   $fields['user-user-field_julio_department'] = array(
     'field_config' => array(
       'active' => '1',
@@ -31,6 +31,7 @@ function julio_staff_field_default_fields() {
           0 => 'format',
         ),
       ),
+      'locked' => '0',
       'module' => 'text',
       'settings' => array(
         'max_length' => '255',
@@ -72,7 +73,7 @@ function julio_staff_field_default_fields() {
     ),
   );
 
-  // Exported field: 'user-user-field_julio_email'
+  // Exported field: 'user-user-field_julio_email'.
   $fields['user-user-field_julio_email'] = array(
     'field_config' => array(
       'active' => '1',
@@ -82,6 +83,7 @@ function julio_staff_field_default_fields() {
       'field_name' => 'field_julio_email',
       'foreign keys' => array(),
       'indexes' => array(),
+      'locked' => '0',
       'module' => 'email',
       'settings' => array(),
       'translatable' => '0',
@@ -120,7 +122,7 @@ function julio_staff_field_default_fields() {
     ),
   );
 
-  // Exported field: 'user-user-field_julio_first_name'
+  // Exported field: 'user-user-field_julio_first_name'.
   $fields['user-user-field_julio_first_name'] = array(
     'field_config' => array(
       'active' => '1',
@@ -141,6 +143,7 @@ function julio_staff_field_default_fields() {
           0 => 'format',
         ),
       ),
+      'locked' => '0',
       'module' => 'text',
       'settings' => array(
         'max_length' => '255',
@@ -182,7 +185,7 @@ function julio_staff_field_default_fields() {
     ),
   );
 
-  // Exported field: 'user-user-field_julio_job_title'
+  // Exported field: 'user-user-field_julio_job_title'.
   $fields['user-user-field_julio_job_title'] = array(
     'field_config' => array(
       'active' => '1',
@@ -203,6 +206,7 @@ function julio_staff_field_default_fields() {
           0 => 'format',
         ),
       ),
+      'locked' => '0',
       'module' => 'text',
       'settings' => array(
         'max_length' => '255',
@@ -244,7 +248,7 @@ function julio_staff_field_default_fields() {
     ),
   );
 
-  // Exported field: 'user-user-field_julio_last_name'
+  // Exported field: 'user-user-field_julio_last_name'.
   $fields['user-user-field_julio_last_name'] = array(
     'field_config' => array(
       'active' => '1',
@@ -265,6 +269,7 @@ function julio_staff_field_default_fields() {
           0 => 'format',
         ),
       ),
+      'locked' => '0',
       'module' => 'text',
       'settings' => array(
         'max_length' => '255',
@@ -306,7 +311,7 @@ function julio_staff_field_default_fields() {
     ),
   );
 
-  // Exported field: 'user-user-field_julio_phone'
+  // Exported field: 'user-user-field_julio_phone'.
   $fields['user-user-field_julio_phone'] = array(
     'field_config' => array(
       'active' => '1',
@@ -327,6 +332,7 @@ function julio_staff_field_default_fields() {
           0 => 'format',
         ),
       ),
+      'locked' => '0',
       'module' => 'text',
       'settings' => array(
         'max_length' => '255',

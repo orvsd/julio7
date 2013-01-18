@@ -102,12 +102,7 @@ function og_menu_delete_menu_form_submit($form, &$form_state) {
 function og_menu_edit_menu_form_submit_redirect($form, &$form_state) {
   $group_type = $form['og_menu_group_type']['#value'];
   $gid = $form['og_menu_gid']['#value'];
-  if ($form['#insert']) {
-    $menu_name = 'menu-' . $form['menu_name']['#value'];
-  }
-  else {
-    $menu_name = $form['og_menu_name']['#value'];
-  }
+  $menu_name = $form['#insert'] ? $menu_name = 'menu-' . $form['menu_name']['#value'] : $form['og_menu_name']['#value'];
   $form_state['redirect'] = 'group/' . $group_type . '/' . $gid . '/admin/menus/' . $menu_name;
 }
 
@@ -191,9 +186,9 @@ function og_menu_edit_item_form($form, &$form_state, $type, $group_type, $gid, $
   $b[] = l($menu['title'], 'group/' . $group_type . '/' . $gid . '/admin/menus/' . $menu['menu_name']);
   drupal_set_breadcrumb($b);
   $list = array();
-  $menus = og_menu_get_group_menus(array($gid));
+  $menus = og_menu_get_group_menus(array($group_type => array(0 => $gid)));
   foreach ($menus as $option) {
-    $list[$option->mname] = $option->mtitle;
+    $list[$option['menu_name']] = $option['title'];
   }
 
   // Set the title of the page.
@@ -277,19 +272,21 @@ function og_menu_config_form($form, &$form_state) {
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#description' => t('Specify default links to be added to get each new OG Menu for each node bundle.  Enter each <b>URL</b> followed by a <b>title</b>
+    '#description' => $bundles ? t('Specify default links to be added to get each new OG Menu for each node bundle.  Enter each <b>URL</b> followed by a <b>title</b>
         Delimited by a pipe. Examples: <br><br><ul><li>www.example.com|Example Link</li></ul>
-        <ul><li>faculty/[node:nid]|Link to Faculty Page for Group <em>(If tokens are enabled)</em></li></ul>'),
+        <ul><li>faculty/[node:nid]|Link to Faculty Page for Group <em>(If tokens are enabled)</em></li></ul>') : t('There are no group type bundles yet.'),
   );
 
   // Add a field for each bundle.
-  foreach ($bundles['node'] as $bundle => $bundle_label) {
-    $form['og_menu_default_link_bundles']['og_menu_default_links_' . strtolower($bundle)] = array(
-      '#type' => 'textarea',
-      '#title' => t("<em>{$bundle_label}</em> Bundle"),
-      '#default_value' => variable_get('og_menu_default_links_' . strtolower($bundle), FALSE),
-      '#description' => t("These links will be added to any new OG Menus added to <b>{$bundle_label}</b> groups."),
-    );
+  if ($bundles) {
+    foreach ($bundles['node'] as $bundle => $bundle_label) {
+      $form['og_menu_default_link_bundles']['og_menu_default_links_' . strtolower($bundle)] = array(
+        '#type' => 'textarea',
+        '#title' => t("<em>{$bundle_label}</em> Bundle"),
+        '#default_value' => variable_get('og_menu_default_links_' . strtolower($bundle), FALSE),
+        '#description' => t("These links will be added to any new OG Menus added to <b>{$bundle_label}</b> groups."),
+      );
+    }
   }
 
   if (module_exists('token')) {

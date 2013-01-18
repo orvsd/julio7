@@ -30,13 +30,52 @@ function julio_homepage_slideshow_node_install() {
   }
 
   // nivo slider settings
+  $settings = array(
+    "transition" => "random",
+    "transition_speed" => 500,
+    "pause_length" => 4000,
+    "slices" => 15,
+    "box_columns" => 8,
+    "box_rows" => 4,
+    "start_slide" => 0,
+    "random_start" => 0,
+    "pause_slideshow" => 0,
+    "image_style" => "julio_slideshow",
+    "slider_theme" => "default",
+    "ribbon" => 0,
+    "caption_opacity" => 0.8,
+    "direction_nav" => 1,
+    "direction_nav_hide" => 1,
+    "direction_nav_prev_txt" => "Prev",
+    "direction_nav_next_txt" => "Next",
+    "control_nav" => 1,
+    "control_nav_thumbs" => 0,
+    "control_nav_rel" => 0,
+    "control_nav_search" => ".jpg",
+    "control_nav_replace" => "_thumb.jpg",
+    "keyboard_nav" => 1,
+    "manual_advance" => 0,
+    "before_change" => '',
+    "after_change" => '',
+    "slideshow_end" => '',
+    "last_slide" => '',
+    "after_load" => '',
+  );
+
+  // Build the DB record to be saved/updated.
+  $record = array(
+    'name' => t('Julio Slideshow'),
+    'settings' => $settings,
+  );
+
+  drupal_write_record('media_nivo_slider', $record);
+
   $node->media_nivo_slider_block[LANGUAGE_NONE][0]['value'] = 1;
-  $node->media_nivo_slider_image_style[LANGUAGE_NONE][0]['value'] = 'julio_slideshow';
-  $node->media_nivo_slider_pause_time[LANGUAGE_NONE][0]['value'] = 4000;
-  $node->media_nivo_slider_hover_pause[LANGUAGE_NONE][0]['value'] = 1;
+  $node->media_nivo_slider_config[LANGUAGE_NONE][0]['value'] = $record['cid'];
 
   node_save($node);
   variable_set('julio_homepage_slideshow_node_nid', $node->nid);
+  variable_set('julio_slideshow_config', $record['cid']);
 
   $menu_link = array(
     'menu_name' => 'menu-julio-admin-quick-links',
@@ -77,6 +116,14 @@ function julio_homepage_slideshow_node_uninstall() {
     }
   }
   variable_del('julio_homepage_slideshow_node_fids');
+
+  $cid = variable_get('julio_slideshow_config', 0);
+  if (!empty($cid)) {
+    db_delete('media_nivo_slider')
+      ->condition('cid', $cid)
+      ->execute();
+  }
+  variable_del('julio_slideshow_config');
 }
 
 /**
@@ -89,8 +136,6 @@ function julio_homepage_slideshow_node_create_slides() {
     0 => array(
       'filename' => '/images/textbooks.jpg',
       'drupaluri' => 'public://textbooks.jpg',
-      'description' => 'This is an example slideshow image. Click the "Add/Edit Slides" contextual link change slideshow images. Image courtesy of
-Andy Mangold shared under the attribution license via <a href="http://www.flickr.com/photos/andymangold/sets/72157624600605299/">The Book Thing</a>',
       'title' => 'Textbooks',
       'caption' => '<h2>Example Slideshow Image</h2><p>This is a basic example slideshow image. Click the "Manage Slideshow" contextual link change slideshow images.</p><p>Image Credit: Andy Mangold shared under the <a href="http://creativecommons.org/licenses/by/2.0/">CC attribution license</a>.</p>',
       'license' => 'cc',
@@ -98,8 +143,6 @@ Andy Mangold shared under the attribution license via <a href="http://www.flickr
     1 => array(
       'filename' => '/images/flower.jpg',
       'drupaluri' => 'public://flower.jpg',
-      'description' => 'This is an english textbook. Click the "Add/Edit Slides" contextual link change slideshow images. Image courtesy of
-~ therealme ~ shared under the attribution license via <a href="http://www.flickr.com/photos/therealme/1183684002/sizes/l/in/photostream/">Flower</a>',
       'title' => 'Botany Club',
       'caption' => '<h2>Botany Club Garden Hike</h2><p>Example picture. Click the "Add/Edit Slides" contextual link change slideshow images.</p><p>Image Credit: ~ therealme ~ shared under the <a href="http://creativecommons.org/licenses/by/2.0/">CC attribution license</a>.</p>',
       'license' => 'cc',
@@ -107,8 +150,6 @@ Andy Mangold shared under the attribution license via <a href="http://www.flickr
     2 => array(
       'filename' => '/images/chess.jpg',
       'drupaluri' => 'public://chess.jpg',
-      'description' => 'Chess pieces. Click the "Add/Edit Slides" contextual link change slideshow images. Image courtesy of
-Muffet shared under the attribution license via <a href="http://www.flickr.com/photos/calliope/5347237755/sizes/l/in/photostream/">Chess Pieces</a>',
       'title' => 'Chess Club',
       'caption' => '<h2>Chess Club</h2><p>Chess club meets every Thursday. Click the "Add/Edit Slides" contextual link change slideshow images.</p><p>Image Credit: Muffet shared under the <a href="http://creativecommons.org/licenses/by/2.0/">CC attribution license</a>.</p>',
       'license' => 'cc',
@@ -119,6 +160,7 @@ Muffet shared under the attribution license via <a href="http://www.flickr.com/p
   $fids = array();
   foreach ($images as $image) {
     $fcontents = file_get_contents(dirname(__FILE__) . $image['filename']);
+    $image['description'] = $image['caption'];
     $file = file_save_data($fcontents, $image['drupaluri'], FILE_EXISTS_REPLACE);
     $file = file_load($file->fid);
     $file->media_description[LANGUAGE_NONE][0] = array(

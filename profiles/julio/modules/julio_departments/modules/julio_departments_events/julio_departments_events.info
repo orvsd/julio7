@@ -1,11 +1,12 @@
 name = Departments Events
 description = Meta feature, requires julio_departments and julio_events
 core = 7.x
-package = Julio: Features
+package = Julio: Departments
 php = 5.2.4
 project = julio
 dependencies[] = ctools
 dependencies[] = features
+dependencies[] = fullcalendar
 dependencies[] = og
 dependencies[] = views
 features[ctools][] = views:views_default:3.0
@@ -17,9 +18,9 @@ features[og_features_permission][] = node:julio_department:update any julio_even
 features[og_features_permission][] = node:julio_department:update own julio_event content
 features[views_view][] = julio_dept_events
 
-; Information added by drupal.org packaging script on 2012-10-03
+; Information added by drupal.org packaging script on 2013-01-10
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1349224331"
+datestamp = "1357824399"
 

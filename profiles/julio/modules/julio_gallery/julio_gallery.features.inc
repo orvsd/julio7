@@ -18,7 +18,7 @@ function julio_gallery_ctools_plugin_api() {
  * Implements hook_views_api().
  */
 function julio_gallery_views_api() {
-  return array("version" => "3.0");
+  return array("api" => "3.0");
 }
 
 /**
@@ -27,7 +27,7 @@ function julio_gallery_views_api() {
 function julio_gallery_image_default_styles() {
   $styles = array();
 
-  // Exported image style: julio_featured_image_group
+  // Exported image style: julio_featured_image_group.
   $styles['julio_featured_image_group'] = array(
     'name' => 'julio_featured_image_group',
     'effects' => array(

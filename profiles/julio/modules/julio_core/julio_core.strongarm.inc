@@ -13,6 +13,46 @@ function julio_core_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'menu_options_julio_page';
+  $strongarm->value = array(
+    0 => 'main-menu',
+  );
+  $export['menu_options_julio_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'menu_parent_julio_page';
+  $strongarm->value = 'main-menu:0';
+  $export['menu_parent_julio_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_options_julio_page';
+  $strongarm->value = array(
+    0 => 'status',
+    1 => 'promote',
+  );
+  $export['node_options_julio_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_preview_julio_page';
+  $strongarm->value = '1';
+  $export['node_preview_julio_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_submitted_julio_page';
+  $strongarm->value = 0;
+  $export['node_submitted_julio_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_case';
   $strongarm->value = '1';
   $export['pathauto_case'] = $strongarm;
@@ -117,6 +157,41 @@ function julio_core_strongarm() {
   $strongarm->name = 'site_frontpage';
   $strongarm->value = 'node/1';
   $export['site_frontpage'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_pictures';
+  $strongarm->value = '1';
+  $export['user_pictures'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_picture_dimensions';
+  $strongarm->value = '1024x1024';
+  $export['user_picture_dimensions'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_picture_file_size';
+  $strongarm->value = '800';
+  $export['user_picture_file_size'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_picture_style';
+  $strongarm->value = 'thumbnail';
+  $export['user_picture_style'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_register';
+  $strongarm->value = 2;
+  $export['user_register'] = $strongarm;
 
   return $export;
 }

@@ -200,7 +200,7 @@ function og_menu_theme($existing, $type, $theme, $path) {
 function theme_og_menu_node_form($form) {
   $menus = og_menu_get_group_menus();
   foreach ($menus as $menu) {
-    $settings['menus'][$menu->mname] = $menu->gid;
+    $settings['menus'][$menu['menu_name']] = $menu['gid'];
   }
   $settings['admin'] = user_access('administer menu');
   drupal_add_js(array('og_menu' => $settings), 'setting');
@@ -223,43 +223,48 @@ function og_menu_block_info() {
  */
 function og_menu_block_view($delta = '') {
   $block = array();
-  if ($delta == 'og_single_menu_block') {
-    $context = og_context();
-    $group = isset($context['gid']) ? $context['gid'] : 0;
-    $menus = og_menu_get_group_menus(array($group));
+  $context = og_context();
+  if ($delta == 'og_single_menu_block' && $context) {
+    $menus = og_menu_get_group_menus(array(
+      $context['group_type'] => array(
+        0 => $context['gid'],
+      )
+    ));
     $menu = array_shift($menus);
 
     if ($menu) {
       if (variable_get('og_menu_block_links', FALSE)) {
-        $block['subject'] = l($menu->mtitle, 'node/' . $group);
+        $block['subject'] = l($menu['title'], $menu['group_type'] . '/' . $menu['gid']);
       }
       else {
-        $block['subject'] = check_plain($menu->mtitle);
+        $block['subject'] = check_plain($menu['title']);
       }
-      $block['content'] = menu_tree($menu->mname);
+      $block['content'] = menu_tree($menu['menu_name']);
     }
   }
-  if ($delta == 'og_multi_menu_block') { // @todo Test this!!
+  if ($delta == 'og_multi_menu_block' && $context) { // @todo Test this!!
     drupal_add_css(drupal_get_path('module', 'og_menu') . '/og_menu.css');
     drupal_add_css(drupal_get_path('module', 'og_menu') . '/og_menu.css');
-    $context = og_context();
-    $group = isset($context['gid']) ? $context['gid'] : 0;
-    $menus = og_menu_get_group_menus(array($group));
+    $menus = og_menu_get_group_menus(array(
+      $context['group_type'] => array(
+        0 => $context['gid'],
+      )
+    ));
     $plural = count($menus) > 1 ? TRUE : FALSE;
     foreach ($menus as $menu) {
       $title = ''; $content = '';
       if (variable_get('og_menu_block_links', FALSE)) {
-        $title = l($menu->mtitle, 'node/' . $group);
+        $title = l($menu['title'], $menu['group_type'] . '/' . $menu['gid']);
       }
       else {
-        $title = check_plain($menu->mtitle);
+        $title = check_plain($menu['title']);
       }
       if ($plural) {
-        $content = "<div class='block-og-menu-inset'><h2>{$title}</h2>" . render(menu_tree($menu->mname)) . "</div>";
+        $content = "<div class='block-og-menu-inset'><h2>{$title}</h2>" . render(menu_tree($menu['menu_name'])) . "</div>";
       }
       else {
         $block['subject'] = $title;
-        $content =  render(menu_tree($menu->mname));
+        $content =  render(menu_tree($menu['menu_name']));
       }
       $block['content'] = isset($block['content']) ? $block['content'] . $content  :  $content;
       if ($plural) {
@@ -328,16 +333,14 @@ function og_menu_form_node_form_alter(&$form, &$form_state) {
     }
 
     if (user_access('administer og menu') || $context_based_access || $group_based_access || TRUE) {
-      global $user;
       $groups = array();
-      $gids = og_menu_get_node_groups('user', $user);
       $list = array();
       $settings = array();
-      $menus = og_menu_get_group_menus($gids);
+      $menus = og_menu_get_group_menus();
       if (!empty($menus)) {
         foreach ($menus as $menu) {
-          $list[$menu->mname] = $menu->mtitle;
-          $settings[$menu->mname] = $menu->gid;
+          $list[$menu['menu_name']] = $menu['title'];
+          $settings[$menu['menu_name']] = $menu['gid'];
         }
         // If user has administer menu permission, also show other menu options.
         if (user_access('administer menu')) {
@@ -587,23 +590,28 @@ function og_menu_node_prepare($node) {
   if (og_is_group_type('node', $node->type)) {
     $node->og_menu = og_menu_get_group_menus();
     if (!empty($node->nid)) {
-      $node->og_menu = og_menu_get_group_menus(array($node->nid));
+      $node->og_menu = og_menu_get_group_menus(array(
+        'node' => array(
+          0 => $node->nid,
+        )
+      ));
     }
   }
   // $node is not a new node and is a group content type, menu link is not set.
   if ((!empty($node->nid))
           && og_is_group_content_type('node', $node->type)
           && empty($node->menu['link_title'])) {
-    global $user;
-    if ($gids = og_menu_get_node_groups('user', $user)) {
-      $og_menus = db_query("SELECT menu_name FROM {og_menu} WHERE gid IN (:gids)", array(':gids' => $gids))->fetchCol();
+    $menus = og_menu_get_group_menus();
+    $menu_names = array();
+    foreach ($menus as $menu) {
+      $menu_names[] = $menu['menu_name'];
     }
     $mlid = FALSE;
     // This query comes from menu.modules node_prepare, and is how it does it.
-    if (!empty($og_menus)) {
+    if (!empty($menus)) {
       $mlid = db_query_range("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu' AND menu_name IN (:type_menus) ORDER BY mlid ASC", 0, 1, array(
                 ':path' => 'node/' . $node->nid,
-                ':type_menus' => array_values($og_menus),
+                ':type_menus' => $menu_names,
               ))->fetchField();
     }
     if ($mlid) {
@@ -629,7 +637,7 @@ function og_menu_node_insert($node) {
         'title' => $node->title,
         'description' => t('OG Menu for') . ' ' . check_plain($node->title),
       ));
-      og_menu_update_menu('menu-og-' . $node->nid, $node->nid);
+      og_menu_update_menu('menu-og-' . $node->nid, $node->nid, 'node');
     }
   }
 }
@@ -641,28 +649,30 @@ function og_menu_node_update($node) {
   if (og_is_group_type('node', $node->type)) {
     if (isset($node->og_menu)) {
       if ($node->og_menu) {
-        $menu = og_menu_get_group_menus(array($node->nid));
+        $menu = og_menu_get_group_menus(array('node' => array(0 => $node->nid)));
         if (empty($menu)) {
           menu_save(array(
             'menu_name' => 'menu-og-' . $node->nid,
             'title' => $node->title,
             'description' => t('OG Menu for') . ' ' . check_plain($node->title),
           ));
-          og_menu_update_menu('menu-og-' . $node->nid, $node->nid);
+          og_menu_update_menu('menu-og-' . $node->nid, $node->nid, 'node');
         }
       }
       else {
         // Delete the associated menus.
         // We can't assume that the menu name is 'menu-og-[gid]'
         // we need to look up menus associated with this group
-        $result = db_query('SELECT menu_name FROM {og_menu} WHERE gid = :gid', array(':gid' => $node->nid))->fetchCol();
-        foreach ($result as $menu_name) {
-          menu_delete(array(
-            'menu_name' => $menu_name,
-            'title' => $node->title,
-            'description' => t('OG Menu for') . ' ' . check_plain($node->title),
-          ));
-          og_menu_update_menu($menu_name);
+        $result = db_select('og_menu', 'm')
+          ->fields('m', array('menu_name'))
+          ->condition('gid', $node->nid, '=')
+          ->condition('group_type', 'node', '=')
+          ->execute();
+
+        while ($record = $result->fetchAssoc()) {
+          $menu = menu_load($record['menu_name']);
+          menu_delete($menu);
+          og_menu_delete_menu($record['menu_name']);
         }
       }
     }
@@ -680,12 +690,16 @@ function og_menu_node_delete($node) {
      * we need the gid of the group being deleted, see if its an og assosiated
      * menu from og_menu and then from that menu name, delete it.
      */
-    $results = db_query('SELECT menu_name FROM {og_menu} WHERE gid = :gid', array(':gid' => $node->nid))->fetchCol();
+    $result = db_select('og_menu', 'm')
+      ->fields('m', array('menu_name'))
+      ->condition('gid', $node->nid, '=')
+      ->condition('group_type', 'node', '=')
+      ->execute();
 
-    // @todo This can be replaced with two db_delete queries
-    foreach ($results as $menu_name) {
-      db_query("DELETE FROM {menu_custom} WHERE menu_name = :mname", array(':mname' => $menu_name));
-      og_menu_update_menu($menu_name);
+    while ($record = $result->fetchAssoc()) {
+      $menu = menu_load($record['menu_name']);
+      menu_delete($menu);
+      og_menu_delete_menu($record['menu_name']);
     }
   }
 }
@@ -724,11 +738,11 @@ function og_menu_node_form_validate($form, &$form_state) {
     $gids = og_get_entity_groups('node', $form_state['node']);
   }
   foreach ($menus as $menu) {
-    if ($menu->mname == $parent) {
+    if ($menu['menu_name'] == $parent) {
       // Check if user has access to the chosen menu parent
       $has_menu_access = TRUE;
       // Check if menu belongs to one of the selected groups
-      if (!in_array($menu->gid, $gids)) {
+      if (!in_array($menu['gid'], $gids)) {
         form_set_error('og_groups', t('The menu you chose does not belong to the selected groups.'));
       }
     }
@@ -741,45 +755,54 @@ function og_menu_node_form_validate($form, &$form_state) {
 /**
  * Updates internal record of group's menu id
  */
-function og_menu_update_menu($menu_name, $gid = NULL) {
-  // Do it the lazy way
-  db_query("DELETE FROM {og_menu} WHERE menu_name = :mname", array(':mname' => $menu_name));
-  if (!is_null($gid)) {
-    db_query("INSERT INTO {og_menu} (gid, menu_name) VALUES (:gid, :mname)", array(':gid' => $gid, ':mname' => $menu_name));
-  }
+function og_menu_update_menu($menu_name, $gid, $group_type) {
+  db_merge('og_menu')
+    ->key(array('menu_name' => $menu_name))
+    ->fields(array(
+      'gid' => $gid,
+      'group_type' => $group_type,
+    ))
+    ->execute();
+}
+
+/**
+ * Deletes menus for og menu table.
+ */
+function og_menu_delete_menu($menu_name) {
+  db_delete('og_menu')
+    ->condition('menu_name', $menu_name)
+    ->execute();
 }
 
 /**
  * Returns acessible menus for a given user or gids in a structured array.
  *
  * @param gids
- *    An optional array of group gids.
+ *    An optional array of groups as returned by og_get_entity_groups().
  * @param user
  *    An optional array of the user object.
  * @return
  *    A structured array with menus list.
  */
-function og_menu_get_group_menus($gids = NULL, $user = NULL) {
-  if (!$user) {
-    global $user;
-  }
-  if (!$gids) {
-    $gids = og_menu_get_node_groups('user', $user);
+function og_menu_get_group_menus($groups = NULL, $user = NULL) {
+  if (!$groups) {
+    $groups = og_get_entity_groups('user', $user);
   }
   $menus = array();
-  if ($gids) {
-    // @todo Convert this query to use db_select().
-    $result = db_query("SELECT
-                          om.gid,
-                          om.menu_name as omname,
-                          m.menu_name as mname,
-                          m.title as mtitle
-                        FROM {og_menu} om
-                         LEFT JOIN {menu_custom} m ON om.menu_name = m.menu_name
-                        WHERE om.gid IN (:gids)
-                        ORDER BY mtitle", array(':gids' => $gids));
-    foreach ($result as $menu) {
-      $menus[] = $menu;
+  foreach ($groups as $group_type => $membership) {
+    foreach ($membership as $id => $gid) {
+      $query = db_select('og_menu', 'om');
+      $query
+        ->join('menu_custom', 'm', 'om.menu_name = m.menu_name');
+      $query
+        ->fields('om', array('gid', 'group_type', 'menu_name'))
+        ->fields('m', array('title'))
+        ->condition('om.gid', $gid, '=')
+        ->condition('om.group_type', $group_type, '=');
+      $result = $query->execute();
+      while ($record = $result->fetchAssoc()) {
+        $menus[] = $record;
+      }
     }
   }
   return $menus;
@@ -840,29 +863,10 @@ function og_menu_redirect($form, &$form_state) {
  * Submit handler used on various forms.
  */
 function og_menu_edit_menu_form_submit($form, &$form_state) {
-  $menu_name = $form_state['values']['menu_name'];
-  $value = $form_state['values']['og_menu_gid'];
-  if (!empty($value)) {
-    // Add 'menu-' if this is a new menu
-    if (strncmp($menu_name, 'menu-', 5) != 0) {
-      $menu_name = 'menu-' . $menu_name;
-    }
-    if (is_numeric($value)) {
-      og_menu_update_menu($menu_name, $value);
-    }
-    else {
-      preg_match('/^(?:\s*|(.*) )?\[\s*gid\s*:\s*(\d+)\s*\]$/', $value, $matches);
-      if (!empty($matches)) {
-        $value = $matches[count($matches) - 1];
-        if (is_numeric($value)) {
-          og_menu_update_menu($menu_name, $value);
-        }
-      }
-      else {
-        drupal_set_message(t('Cannot assign menu to invalid group, please retry'), 'error');
-      }
-    }
-  }
+  $group_type = $form['og_menu_group_type']['#value'];
+  $gid = $form['og_menu_gid']['#value'];
+  $menu_name = $form['#insert'] ? $menu_name = 'menu-' . $form['menu_name']['#value'] : $form['og_menu_name']['#value'];
+  og_menu_update_menu($menu_name, $gid, $group_type);
 }
 
 /**
@@ -870,7 +874,7 @@ function og_menu_edit_menu_form_submit($form, &$form_state) {
  */
 function og_menu_delete_menu_confirm_submit($form, &$form_state) {
   $menu = $form['#menu'];
-  db_query("DELETE FROM {og_menu} WHERE menu_name = :mname", array(':mname' => $menu['menu_name']));
+  og_menu_delete_menu($menu['menu_name']);
 }
 
 /**

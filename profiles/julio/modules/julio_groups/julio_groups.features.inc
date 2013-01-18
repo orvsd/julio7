@@ -20,7 +20,7 @@ function julio_groups_ctools_plugin_api() {
 function julio_groups_image_default_styles() {
   $styles = array();
 
-  // Exported image style: julio_additional_img
+  // Exported image style: julio_additional_img.
   $styles['julio_additional_img'] = array(
     'name' => 'julio_additional_img',
     'effects' => array(

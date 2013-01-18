@@ -35,7 +35,7 @@ function julio_clubs_ui_context_default_contexts() {
     ),
     'path' => array(
       'values' => array(
-      'clubs*' => 'clubs*',
+        'clubs*' => 'clubs*',
       ),
     ),
   );

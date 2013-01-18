@@ -36,8 +36,8 @@ function julio_clubs_galleries_og_features_default_permissions() {
   // Exported og permission: 'node:julio_club:update any media_gallery content'
   $permissions['node:julio_club:update any media_gallery content'] = array(
     'roles' => array(
-      'member' => 'member',
       'administrator member' => 'administrator member',
+      'member' => 'member',
     ),
   );
 

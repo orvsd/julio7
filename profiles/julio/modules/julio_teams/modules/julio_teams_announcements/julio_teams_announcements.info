@@ -1,7 +1,7 @@
 name = Teams Announcements
 description = Meta feature, requires julio_teams and julio_announcements
 core = 7.x
-package = Julio: Features
+package = Julio: Teams
 php = 5.2.4
 project = julio
 dependencies[] = ctools
@@ -18,9 +18,9 @@ features[og_features_permission][] = node:julio_team:update any julio_announceme
 features[og_features_permission][] = node:julio_team:update own julio_announcement content
 features[views_view][] = julio_teams_news
 
-; Information added by drupal.org packaging script on 2012-10-03
+; Information added by drupal.org packaging script on 2013-01-10
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "julio"
-datestamp = "1349224331"
+datestamp = "1357824399"
 

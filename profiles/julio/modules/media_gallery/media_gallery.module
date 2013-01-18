@@ -58,45 +58,50 @@ function media_gallery_menu() {
     'page arguments' => array('gallery', 3),
     'file' => 'media_gallery.pages.inc',
   );
-  $items['media-gallery/detail/%node/%file'] = array(
+  $items['media-gallery/detail/%media_gallery_mg_node/%media_gallery_mg_item'] = array(
     'page callback' => 'media_gallery_detail_page',
     'page arguments' => array(2, 3),
     'access callback' => 'media_gallery_view_item_access',
     'access arguments' => array(2, 3),
+    'load arguments' => array(2),
     'file' => 'media_gallery.pages.inc',
   );
-  $items['media-gallery/detail/%node/%file/view'] = array(
+  $items['media-gallery/detail/%media_gallery_mg_node/%media_gallery_mg_item/view'] = array(
     'title' => 'View',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
+    'load arguments' => array(2),
   );
   // An in-gallery-context version of media/%file/edit.
-  $items['media-gallery/detail/%node/%file/edit'] = array(
+  $items['media-gallery/detail/%media_gallery_mg_node/%media_gallery_mg_item/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'media_gallery_media_page_edit',
     'page arguments'  => array(2, 3),
     'access callback' => 'media_gallery_edit_item_access',
     'access arguments' => array(2, 3),
+    'load arguments' => array(2),
     'weight' => 0,
     'type' => MENU_LOCAL_TASK,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     'file' => 'media_gallery.pages.inc',
   );
-  $items['media-gallery/detail/%node/%file/remove'] = array(
+  $items['media-gallery/detail/%media_gallery_mg_node/%media_gallery_mg_item/remove'] = array(
     'title' => 'Remove',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('media_gallery_remove_item_form', 2, 3),
     'access callback' => 'media_gallery_remove_item_access',
     'access arguments' => array(2, 3),
+    'load arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     'file' => 'media_gallery.pages.inc',
   );
-  $items['media-gallery/lightbox/%node/%file'] = array(
+  $items['media-gallery/lightbox/%media_gallery_mg_node/%media_gallery_mg_item'] = array(
     'page callback' => 'media_gallery_lightbox_page',
     'page arguments' => array(2, 3),
     'access callback' => 'media_gallery_view_item_access',
     'access arguments' => array(2, 3),
+    'load arguments' => array(2),
     'file' => 'media_gallery.pages.inc',
     'delivery callback' => 'media_gallery_lightbox_delivery_callback',
   );
@@ -130,6 +135,48 @@ function media_gallery_menu() {
     'file' => 'media.pages.inc',
   );
   return $items;
+}
+
+/**
+ * Load a node object from the database.
+ *
+ * @see node_load()
+ * @see media_gallery_menu()
+ *
+ * @param $nid
+ *   The node ID.
+ * @param $nid2
+ *   The same as $nid. Unused.
+ *
+ * @return
+ *   A fully-populated node object, or FALSE if the node is not found.
+ */
+function media_gallery_mg_node_load($nid, $nid2 = NULL) {
+  return node_load($nid);
+}
+/**
+ * Load a file object from the database, if it is part of the media_gallery
+ * node.
+ *
+ * @see node_load()
+ * @see file_load()
+ * @see media_gallery_menu()
+ *
+ * @param $fid
+ *   The file ID.
+ * @param $nid
+ *   The media_gallery node ID.
+ *
+ * @return
+ *   A fully-populated file object, or FALSE if the file is not part of the
+ *   media_gallery.
+ */
+function media_gallery_mg_item_load($fid, $nid) {
+  $node = node_load($nid);
+  if ($node && $node->type == 'media_gallery' && in_array($fid, media_gallery_get_file_ids($node))) {
+    return file_load($fid);
+  }
+  return FALSE;
 }
 
 /**
@@ -293,7 +340,7 @@ function media_gallery_view($node, $view_mode) {
     else {
       $media = array();
     }
-    
+
     // Only display the requested number of media items per page.
     $columns = $full ? $node->media_gallery_columns[LANGUAGE_NONE][0]['value'] : $node->media_gallery_block_columns[LANGUAGE_NONE][0]['value'];
     $rows = $full ? $node->media_gallery_rows[LANGUAGE_NONE][0]['value'] : $node->media_gallery_block_rows[LANGUAGE_NONE][0]['value'];
@@ -332,12 +379,11 @@ function media_gallery_view($node, $view_mode) {
 
     // Field rendering requires sequential deltas, so re-key.
     // @todo Open a Drupal core issue about this.
-    
     if ($media) {
       $node->media_gallery_media[LANGUAGE_NONE] = array_values($media);
     }
     else {
-      $node->media_gallery_media[LANGUAGE_NONE] = array();  
+      $node->media_gallery_media[LANGUAGE_NONE] = array();
     }
 
     // Create a set of dummy links to media items that don't appear on this
@@ -759,7 +805,7 @@ function media_gallery_get_media_type_count($node, $media_field = 'media_gallery
 function media_gallery_get_file_ids($node, $media_field = 'media_gallery_media') {
   $fids = array();
   $media_items = _media_gallery_field_get_items('node', $node, $media_field);
-  if( $media_items !== FALSE ) {
+  if ($media_items !== FALSE) {
     foreach ($media_items as $item) {
       $fids[] = _media_gallery_get_media_fid($item);
     }
@@ -907,7 +953,7 @@ function media_gallery_form_media_gallery_node_form_alter(&$form, &$form_state) 
   );
 
   // Move the items to the fieldset.
-  foreach($fieldset as $id => $subgroup) {
+  foreach ($fieldset as $id => $subgroup) {
     $form['settings_wrapper'][$subgroup][$id] = $form[$id];
     // locale_field_node_form_submit() looks for field language information in
     // a hard-coded part of $form.
@@ -934,7 +980,7 @@ function media_gallery_form_media_gallery_node_form_alter(&$form, &$form_state) 
   );
 
   // Move the items to the fieldset.
-  foreach($fieldset as $id => $subgroup) {
+  foreach ($fieldset as $id => $subgroup) {
     $form[$subgroup][$id] = $form[$id];
     // locale_field_node_form_submit() looks for field language information in
     // a hard-coded part of $form.
@@ -1056,7 +1102,7 @@ function media_gallery_multiedit_remove_item($form, &$form_state) {
  * @see media_gallery_form_media_edit_alter()
  */
 function media_gallery_media_edit_submit($form, &$form_state) {
-  $form_state['redirect'] = 'media-gallery/detail/' .  $form_state['media_gallery']['gallery']->nid . '/' . $form_state['values']['fid'];
+  $form_state['redirect'] = 'media-gallery/detail/' . $form_state['media_gallery']['gallery']->nid . '/' . $form_state['values']['fid'];
 }
 
 /**
@@ -1096,7 +1142,7 @@ function _media_gallery_attach_css_resources(&$element) {
 }
 
 /**
- * Helper function to attach JS for media galleries to 
+ * Helper function to attach JS for media galleries to
  */
 function _media_gallery_attach_edit_resources(&$element) {
   $path = drupal_get_path('module', 'media_gallery');
@@ -1208,7 +1254,7 @@ function media_gallery_contextual_links_view_alter(&$element, $items) {
 function media_gallery_preprocess_field(&$variables, $hook) {
   if ($variables['element']['#field_name'] === 'media_gallery_media') {
     $columns = 1;
-    switch($variables['element']['#view_mode']) {
+    switch ($variables['element']['#view_mode']) {
       case 'media_gallery_block':
         $columns = $variables['element']['#object']->media_gallery_block_columns['und'][0]['value'];
         break;
@@ -1225,7 +1271,6 @@ function media_gallery_preprocess_field(&$variables, $hook) {
     }
     foreach ($variables['items'] as $delta => $item) {
       $variables['item_attributes_array'][$delta] = array('id' => 'media-gallery-media-' . $delta);
-
     }
   }
 }
@@ -1298,7 +1343,7 @@ function media_gallery_form_taxonomy_form_term_alter(&$form, &$form_state) {
   );
 
   // Move the items to the fieldset.
-  foreach($fieldset as $id => $subgroup) {
+  foreach ($fieldset as $id => $subgroup) {
     $form['settings_wrapper'][$subgroup][$id] = $form[$id];
     unset($form[$id]);
   }
@@ -1356,7 +1401,7 @@ function media_gallery_module_implements_alter(&$implementations, $hook) {
     // control, this can be changed.
     //case 'form_taxonomy_form_term_alter':
     case 'form_alter':
-      if (!isset($implementations['media_gallery'])){
+      if (!isset($implementations['media_gallery'])) {
         break;
       }
       $group = $implementations['media_gallery'];
@@ -1383,7 +1428,7 @@ function media_gallery_get_default_gallery_collection() {
   $tid = db_select('taxonomy_term_data', 'ttd')
     ->fields('ttd', array('tid'))
     ->condition('vid', $gallery_collection_vid)
-    ->range(0,1)
+    ->range(0, 1)
     ->execute()
     ->fetchField();
 
@@ -1423,7 +1468,7 @@ function media_gallery_edit_access($node) {
 function media_gallery_multiedit_access($node) {
   if (media_gallery_edit_access($node) && media_access('edit')) {
     $media_items = field_get_items('node', $node, 'media_gallery_media');
-    if( $media_items !== FALSE && count($media_items) > 0 ) {
+    if ($media_items !== FALSE && count($media_items) > 0) {
       return TRUE;
     }
   }

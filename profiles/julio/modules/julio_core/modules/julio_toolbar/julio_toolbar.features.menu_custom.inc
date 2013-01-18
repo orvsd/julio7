@@ -10,7 +10,7 @@
 function julio_toolbar_menu_default_menu_custom() {
   $menus = array();
 
-  // Exported menu: menu-julio-toolbar
+  // Exported menu: menu-julio-toolbar.
   $menus['menu-julio-toolbar'] = array(
     'menu_name' => 'menu-julio-toolbar',
     'title' => 'Julio Toolbar',
