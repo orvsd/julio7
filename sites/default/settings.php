@@ -259,7 +259,7 @@ $drupal_hash_salt = file_get_contents('/data/drupalsites/' . $orvsduser . '/juli
  * It is not allowed to have a trailing slash; Drupal will add it
  * for you.
  */
-//$base_url = 'http://' . $orvsdfqdn;
+// $base_url = 'http://' . $orvsdfqdn;
 
 /**
  * PHP settings:
@@ -296,6 +296,9 @@ ini_set('session.gc_maxlifetime', 200000);
  */
 ini_set('session.cookie_lifetime', 2000000);
 
+// Safer / less verbose error reporting
+error_reporting(E_ALL & ~E_NOTICE);
+
 /**
  * If you encounter a situation where users post a large amount of text, and
  * the result is stripped out upon viewing but can still be edited, Drupal's
@@ -306,9 +309,6 @@ ini_set('session.cookie_lifetime', 2000000);
  */
 # ini_set('pcre.backtrack_limit', 200000);
 # ini_set('pcre.recursion_limit', 200000);
-
-// Safer / less verbose error reporting
-error_reporting(E_ALL & ~E_NOTICE);
 
 /**
  * Drupal automatically generates a unique session cookie name for each site
