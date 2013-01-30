@@ -519,5 +519,20 @@ $conf['404_fast_html'] = '<html xmlns="http://www.w3.org/1999/xhtml"><head><titl
  */
 $conf['allow_authorize_operations'] = FALSE;
 
+/**
+ * ORVSD SSL Proxy Overrides
+ */
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+  $base_root = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+  if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') $_SERVER['SERVER_PORT'] = 443;
+}
+elseif (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+  $base_root = 'https';
+}
+else {
+  $base_root = 'http';
+}
+$base_url = $base_root .= '://'. $_SERVER['HTTP_HOST'];
+
 // ORVSD settings.php include
 require_once('/data/drupalsites/' . $orvsduser . '/julio7/' . $orvsdfqdn . '/settings.php');
