@@ -536,3 +536,5 @@ $base_url = $base_root .= '://'. $_SERVER['HTTP_HOST'];
 
 // ORVSD settings.php include
 require_once('/data/drupalsites/' . $orvsduser . '/julio7/' . $orvsdfqdn . '/settings.php');
+
+$conf['file_temporary_path'] = '/data/drupalsites/' . $orvsduser . '/julio7/' . $orvsdfqdn . '/settings.php';
